@@ -48,13 +48,13 @@ class Billing(models.Model):
     customer_contact = models.PositiveIntegerField(validators=[MaxValueValidator(9999999999),MinValueValidator(1000000000)])
 
 #Accounting
-class Accounts(model.Models):
+class Accounts(models.Model):
     date = models.DateField()
     sales = models.CharField()
     purchases = models.CharField()
 
 
-class Delivery(model.Models):
+class Delivery(models.Model):
     customer_address = models.CharField(max_length=200)
     customer_contact = models.PositiveIntegerField(validators=[MaxValueValidator(9999999999),MinValueValidator(1000000000)])
     # isko billing se kaise link karna hai
