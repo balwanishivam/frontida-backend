@@ -1,4 +1,5 @@
 from django.db import models
+from django_google_maps import fields as map_fields
 import datetime
 from django.core.validators import MaxValueValidator, MinValueValidator
 
@@ -15,7 +16,7 @@ CITY=[
 
 
 #Medicine Inventory
-class Medicine_Inventory(models.Model):
+class MedicineInventory(models.Model):
     medicine_name = models.CharField(max_length=200)
     company_name = models.CharField(max_length=200)
     mfd = models.DateField()
@@ -26,7 +27,7 @@ class Medicine_Inventory(models.Model):
     # user = models.ForeignKey(Myuser,on_delete=models.CASCADE)
 
 #Store Details
-class Store_Details(models.Model):
+class StoreDetails(models.Model):
     store_name = models.CharField(max_length=100, unique=False)
     store_owner = models.CharField(max_length=70)
     address = models.CharField(max_length=500)
@@ -41,7 +42,7 @@ class Store_Details(models.Model):
 #Billing
 class Billing(models.Model):
     medicine_name = models.CharField(max_length=200)
-    # medicine_id = models.ForeignKey()
+    #medicine_id = models.ForeignKey()
     required_quantity = models.PositiveIntegerField()
     cost = models.PositiveIntegerField()
     customer_name = models.CharField(null=True, max_length=50)
