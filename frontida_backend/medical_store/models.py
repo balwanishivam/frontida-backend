@@ -56,7 +56,7 @@ class Billing(models.Model):
     user = models.ForeignKey(Account,on_delete=models.CASCADE)
 
 #Accounting
-class Accounts(models.Model):
+class Account(models.Model):
     date = models.DateField()
     type=models.CharField(choices=TYPE)
     amount=models.PositiveIntegerField()
