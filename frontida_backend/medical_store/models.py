@@ -30,7 +30,7 @@ class MedicineInventory(models.Model):
     purchase_price = models.PositiveIntegerField()
     sale_price = models.PositiveIntegerField()
     medicine_quantity = models.PositiveIntegerField()
-    Account = models.ForeignKey(Account,on_delete=models.CASCADE)
+    account = models.ForeignKey(Account,on_delete=models.CASCADE)
 
 #Store Details
 class StoreDetails(models.Model):
@@ -39,10 +39,10 @@ class StoreDetails(models.Model):
     address = models.CharField(max_length=500)
     landmark = models.CharField(null=True, max_length=50)
     city = models.CharField(max_length=50,choices=CITY)
-    pincode = models.PositiveIntegerField(validators=[MaxValueValidator(999999),MinValueValidator(100000)])
+    pincode = models.PositiveIntegerField(validators=[MaxValueValidator(999999),MinValueValidator(100000)]) 
     contact = models.PositiveIntegerField(validators=[MaxValueValidator(9999999999),MinValueValidator(1000000000)])
     # location = GMaps
-    Account = models.ForeignKey(Account,on_delete=models.CASCADE)
+    account = models.ForeignKey(Account,on_delete=models.CASCADE)
 
 
 #Billing
@@ -53,7 +53,7 @@ class Billing(models.Model):
     cost = models.PositiveIntegerField()
     customer_name = models.CharField(null=True, max_length=50)
     customer_contact = models.PositiveIntegerField(validators=[MaxValueValidator(9999999999),MinValueValidator(1000000000)])
-    Account = models.ForeignKey(Account,on_delete=models.CASCADE)
+    account = models.ForeignKey(Account,on_delete=models.CASCADE)
 
 
 class Accounting(models.Model):
@@ -61,11 +61,11 @@ class Accounting(models.Model):
     type=models.CharField(max_length=50,choices=TYPE)
     amount=models.PositiveIntegerField()
     date_time=models.DateTimeField(auto_now_add=False)
-    Account = models.ForeignKey(Account,on_delete=models.CASCADE)
+    account = models.ForeignKey(Account,on_delete=models.CASCADE)
 
 class Delivery(models.Model):
     customer_address = models.CharField(max_length=200)
     customer_contact = models.PositiveIntegerField(validators=[MaxValueValidator(9999999999),MinValueValidator(1000000000)])
     time_of_order=models.DateTimeField(auto_now_add=False)
     billing=models.ForeignKey(Billing,on_delete=models.CASCADE)
-    Account = models.ForeignKey(Account,on_delete=models.CASCADE)
+    account = models.ForeignKey(Account,on_delete=models.CASCADE)
