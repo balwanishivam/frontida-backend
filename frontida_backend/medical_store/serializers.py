@@ -1,27 +1,27 @@
-from rest_framework.serializers import ModelSerializers
+from rest_framework.serializers import ModelSerializer
 from .models import *
 
-class MedicineSerializers(serializers.ModelSerializers):
+class MedicineSerializers(ModelSerializer):
     class Meta:
         model=MedicineInventory
-        fields="__all__"
+        exclude=['account',]
 
-class StoreDetailsSerializers(ModelSerializers):
+class StoreDetailsSerializers(ModelSerializer):
     class Meta:
         model=StoreDetails
-        fields="__all__"
+        exclude=['account',]
 
-class BillingSerializers(ModelSerializers):
+class BillingSerializers(ModelSerializer):
     class Meta:
         model=Billing
-        fields="__all__"
+        exclude=['account',]
 
-class AccountSerializers(ModelSerializers):
+class AccountSerializers(ModelSerializer):
     class Meta:
         model=Account
-        fields="__all__"
+        exclude=['account',]
     
-class DeliverySerializers(ModelSerializers):
+class DeliverySerializers(ModelSerializer):
     class Meta:
         model=Delivery
-        fields="__all__"
+        exclude=['account',]
