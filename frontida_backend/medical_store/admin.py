@@ -2,6 +2,8 @@ import json
 from django.contrib import admin
 from django_google_maps import widgets as map_widgets
 from django_google_maps import fields as map_fields
+from .models import StoreDetails
+admin.site.register(StoreDetails)
 
 class RentalAdmin(admin.ModelAdmin):
     formfield_overrides = {
