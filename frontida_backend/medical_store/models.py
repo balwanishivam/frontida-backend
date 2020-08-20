@@ -58,7 +58,7 @@ class Billing(models.Model):
 
 class Accounting(models.Model):
     date = models.DateField()
-    type=models.CharField(max_length=50,choices=TYPE)
+    sale_type=models.CharField(max_length=50,choices=TYPE)
     amount=models.PositiveIntegerField()
     date_time=models.DateTimeField(auto_now_add=False)
     account = models.ForeignKey(Account,on_delete=models.CASCADE)
