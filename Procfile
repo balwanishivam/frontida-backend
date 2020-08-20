@@ -1,0 +1,1 @@
+web : gunicorn frontida_backend.wsgi
