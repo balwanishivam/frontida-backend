@@ -148,3 +148,5 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated'
     ]
 }
+import django_heroku
+django_heroku.settings(locals())
