@@ -13,7 +13,7 @@ from rest_framework.renderers import TemplateHTMLRenderer
 
 
 class StoreDetailsCreate(APIView):
-    #authentication_classes = [authentication.TokenAuthentication]
+    # authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [IsAuthenticated]
     model=StoreDetails
     serializer_class = StoreDetailsSerializers
@@ -27,8 +27,12 @@ class StoreDetailsCreate(APIView):
 
 
 class MedicineInventoryCreate(APIView):
+    # authentication_classes = [authentication.TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    model=StoreDetails
+    serializer_class = MedicineSerializers
     def post(self,request):
-        serializer=MedicineSerializers
+        serializer=MedicineSerializers(data=request.data)
         if serializer.is_valid():
             serializer.user=self.request.user
             serializer.save()

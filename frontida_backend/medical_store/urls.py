@@ -3,6 +3,7 @@ from .views import *
 app_name="medical_store"
 
 urlpatterns = [
+    path('add-details/',StoreDetailsCreate.as_view(),name="create-store"),
     path('store-details/create-store/',StoreDetailsCreate.as_view(),name="create-store"),
     path('store-details/<int:pk>/',StoreDetailsUpdate.as_view(),name="update-store"),
     path('store-details/<int:pk>/leave-store/',StoreDetailsLeave.as_view(),name="leave-store"),
@@ -15,6 +16,4 @@ urlpatterns = [
     path('delivery/add-delivery/', DeliveryAdd.as_view(), name="add-delivery"),
     path('delivery/<int:pk>/', DeliveryUpdate.as_view(), name="update-delivery"),
     path('delivery/<int:pk>/cancel-delivery/', DeliveryCancel.as_view(), name="cancel-delivery"),
-
-
 ]
