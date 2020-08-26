@@ -40,23 +40,43 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'rest_framework',
     'rest_framework.authtoken',
-    'django_google_maps',
+    # 'django_google_maps',
     'medical_store',
     'rest_auth',
     'allauth',
     'allauth.account',
     'rest_auth.registration',
-    'myuser',
+    'users',
 
 ]
-SITE_ID =1
-GOOGLE_MAPS_API_KEY=[]
-AUTH_USER_MODEL = "myuser.Account" 
-ACCOUNT_AUTHENTICATION_METHOD="email"
-ACCOUNT_EMAIL_REQUIRED=True
+# SITE_ID =1
+# GOOGLE_MAPS_API_KEY=[]
+# AUTH_USER_MODEL = "myuser.Account" 
+# ACCOUNT_AUTHENTICATION_METHOD="email"
+# ACCOUNT_EMAIL_REQUIRED=True
+# ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+# ACCOUNT_USERNAME_REQUIRED = False 
+SITE_ID=1
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
-ACCOUNT_USERNAME_REQUIRED = False 
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
 
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_UNIQUE_EMAIL = True
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_USER_EMAIL_FIELD = 'email'
+ACCOUNT_LOGOUT_ON_GET = True
+
+AUTH_USER_MODEL = 'users.User'
+
+REST_AUTH_SERIALIZERS = {
+    "USER_DETAILS_SERIALIZER": "users.serializers.CustomUserDetailsSerializer",
+}
+REST_AUTH_REGISTER_SERIALIZERS = {
+    "REGISTER_SERIALIZER": "users.serializers.CustomRegisterSerializer",
+}
+REST_AUTH_LOGIN_SERIALIZERs={
+    'LOGIN_SERIALIZER':"users.serializers.CustomLoginSerializer",
+}
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -136,7 +156,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
-
+STATIC_ROOT=os.path.join(BASE_DIR,'staticfiles')
 
 REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
@@ -148,3 +168,5 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated'
     ]
 }
+import django_heroku
+django_heroku.settings(locals())
