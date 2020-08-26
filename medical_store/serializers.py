@@ -18,7 +18,7 @@ class BillingSerializers(ModelSerializer):
 
 class AccountSerializers(ModelSerializer):
     class Meta:
-        model=Account
+        model=Accounting
         exclude=['account',]
     
 class DeliverySerializers(ModelSerializer):
