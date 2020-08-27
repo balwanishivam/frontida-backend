@@ -8,7 +8,8 @@ https://docs.djangoproject.com/en/3.0/howto/deployment/wsgi/
 """
 
 import os
-
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config")
+os.environ.setdefault("DJANGO_CONFIGURATION", "Production")
 from django.core.wsgi import get_wsgi_application
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'frontida_backend.settings')
