@@ -6,10 +6,10 @@ class MedicineSerializers(ModelSerializer):
         model=MedicineInventory
         # exclude=['account',]
 
-class StoreDetailsSerializers(ModelSerializer):
-    class Meta:
-        model=StoreDetails
-        # exclude=['account',]
+# class StoreDetailsSerializers(ModelSerializer):
+#     class Meta:
+#         model=StoreDetails
+#         # exclude=['account',]
 
 class BillingSerializers(ModelSerializer):
     class Meta:

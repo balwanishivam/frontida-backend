@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
-
+from django.urls import reverse_lazy
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -46,36 +46,26 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'rest_auth.registration',
-    # 'users',
+    'allauth.socialaccount',
+    'EmailRegistration',
 ]
-# SITE_ID =1
-# GOOGLE_MAPS_API_KEY=[]
-# AUTH_USER_MODEL = "myuser.Account" 
-# ACCOUNT_AUTHENTICATION_METHOD="email"
-# ACCOUNT_EMAIL_REQUIRED=True
-# ACCOUNT_USER_MODEL_USERNAME_FIELD = None
-# ACCOUNT_USERNAME_REQUIRED = False 
-# SITE_ID=1
-# ACCOUNT_USER_MODEL_USERNAME_FIELD = None
-# ACCOUNT_AUTHENTICATION_METHOD = 'email'
+# django-allauth settings
+SITE_ID = 1
 
-# ACCOUNT_EMAIL_REQUIRED = True
-# ACCOUNT_UNIQUE_EMAIL = True
-# ACCOUNT_USERNAME_REQUIRED = False
-# ACCOUNT_USER_EMAIL_FIELD = 'email'
-# ACCOUNT_LOGOUT_ON_GET = True
+AUTHENTICATION_BACKENDS = (
+    # default
+    'django.contrib.auth.backends.ModelBackend',
+    # email login
+    'allauth.account.auth_backends.AuthenticationBackend',
+)
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+ACCOUNT_AUTHENTICATION_METHOD = "email"
+ACCOUNT_CONFIRM_EMAIL_ON_GET = True
+ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL = reverse_lazy('account_confirm_complete')
+ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = reverse_lazy('account_confirm_complete')
 
-# AUTH_USER_MODEL = 'users.User'
 
-# REST_AUTH_SERIALIZERS = {
-#     "USER_DETAILS_SERIALIZER": "users.serializers.CustomUserDetailsSerializer",
-# }
-# REST_AUTH_REGISTER_SERIALIZERS = {
-#     "REGISTER_SERIALIZER": "users.serializers.CustomRegisterSerializer",
-# }
-# REST_AUTH_LOGIN_SERIALIZERs={
-#     'LOGIN_SERIALIZER':"users.serializers.CustomLoginSerializer",
-# }
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -87,11 +77,11 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'frontida_backend.urls'
-
+TEMPLATES_ROOT = os.path.join(BASE_DIR, "templates")
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [TEMPLATES_ROOT],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -157,6 +147,9 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT=os.path.join(BASE_DIR,'staticfiles')
 
+
+
+
 REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
     # or allow read-only access for unauthenticated users.
@@ -167,5 +160,11 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated'
     ]
 }
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'shivambalwani0407@gmail.com'
+EMAIL_HOST_PASSWORD = 'shivam0407'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
 import django_heroku
 django_heroku.settings(locals())
