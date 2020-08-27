@@ -46,8 +46,7 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'rest_auth.registration',
-    'users',
-
+    # 'users',
 ]
 # SITE_ID =1
 # GOOGLE_MAPS_API_KEY=[]
@@ -56,27 +55,27 @@ INSTALLED_APPS = [
 # ACCOUNT_EMAIL_REQUIRED=True
 # ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 # ACCOUNT_USERNAME_REQUIRED = False 
-SITE_ID=1
-ACCOUNT_USER_MODEL_USERNAME_FIELD = None
-ACCOUNT_AUTHENTICATION_METHOD = 'email'
+# SITE_ID=1
+# ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+# ACCOUNT_AUTHENTICATION_METHOD = 'email'
 
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_UNIQUE_EMAIL = True
-ACCOUNT_USERNAME_REQUIRED = False
-ACCOUNT_USER_EMAIL_FIELD = 'email'
-ACCOUNT_LOGOUT_ON_GET = True
+# ACCOUNT_EMAIL_REQUIRED = True
+# ACCOUNT_UNIQUE_EMAIL = True
+# ACCOUNT_USERNAME_REQUIRED = False
+# ACCOUNT_USER_EMAIL_FIELD = 'email'
+# ACCOUNT_LOGOUT_ON_GET = True
 
-AUTH_USER_MODEL = 'users.User'
+# AUTH_USER_MODEL = 'users.User'
 
-REST_AUTH_SERIALIZERS = {
-    "USER_DETAILS_SERIALIZER": "users.serializers.CustomUserDetailsSerializer",
-}
-REST_AUTH_REGISTER_SERIALIZERS = {
-    "REGISTER_SERIALIZER": "users.serializers.CustomRegisterSerializer",
-}
-REST_AUTH_LOGIN_SERIALIZERs={
-    'LOGIN_SERIALIZER':"users.serializers.CustomLoginSerializer",
-}
+# REST_AUTH_SERIALIZERS = {
+#     "USER_DETAILS_SERIALIZER": "users.serializers.CustomUserDetailsSerializer",
+# }
+# REST_AUTH_REGISTER_SERIALIZERS = {
+#     "REGISTER_SERIALIZER": "users.serializers.CustomRegisterSerializer",
+# }
+# REST_AUTH_LOGIN_SERIALIZERs={
+#     'LOGIN_SERIALIZER':"users.serializers.CustomLoginSerializer",
+# }
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
