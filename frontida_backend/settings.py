@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'rest_auth.registration',
     'allauth.socialaccount',
     'EmailRegistration',
+    'Users',
 ]
 # django-allauth settings
 SITE_ID = 1

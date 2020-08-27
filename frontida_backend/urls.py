@@ -6,6 +6,6 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls')),
     # path('medical-store/',include('medical_store.urls')),
     path('auth/',include('EmailRegistration.urls')),
-    # path('users/',include('users.urls')),
+    path('users/',include('Users.urls')),
 ]
 
