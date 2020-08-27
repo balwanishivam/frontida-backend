@@ -22,7 +22,7 @@ class UserDetailsGet(ListAPIView):
     serializer_class = UserDetailSerializers
     def get_queryset(self):
         user = self.request.user
-        return Purchase.objects.filter(email=user.email)
+        return Users.objects.filter(email=user.email)
 
 
     
