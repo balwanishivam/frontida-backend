@@ -66,6 +66,7 @@ class ResetPasswordEmailRequestSerializer(serializers.ModelSerializer):
     email=serializers.CharField(max_length=255)
 
     class Meta:
+        model=User
         fields=['email']
 
     # def validate(self,attrs):

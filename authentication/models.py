@@ -17,16 +17,17 @@ class UserManager(BaseUserManager):
         user.save()
         return user
     
-    def create_superuser(self,email,password=None):
-        if email is None:
-            raise TypeError('User should have a email')
-        if password is None:
-            raise TypeError('Password should not be none')
-        user=self.create_user(email,"ADMIN",password)
-        user.is_staff=True
-        user.is_suoeruser=True
-        user.save()
-        return user
+    # def create_superuser(self,email,password=None):
+    #     if email is None:
+    #         raise TypeError('User should have a email')
+    #     if password is None:
+    #         raise TypeError('Password should not be none')
+    #     user=self.create_user(email,"ADMIN",password)
+    #     user.is_staff=True
+    #     user.is_superuser=True
+    #     user.is_admin=True
+    #     user.save()
+    #     return user
     
 class User(AbstractBaseUser,PermissionsMixin):
     username=models.CharField(max_length=255,blank=True)
