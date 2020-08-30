@@ -103,3 +103,13 @@ class SetNewPasswordAPI(generics.GenericAPIView):
         serializer=self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         return Response({'sucess':True,'message':'Password reset success'},status=status.HTTP_200_OK)
+
+class LogoutView(generics.GenericAPIView):
+    serializer_class = RefreshTokenSerializer
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args):
+        sz = self.get_serializer(data=request.data)
+        sz.is_valid(raise_exception=True)
+        sz.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
