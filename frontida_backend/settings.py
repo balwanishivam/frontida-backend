@@ -27,7 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['frontida.herokuapp.com']
 AUTH_USER_MODEL='authentication.User'
-
+SITE_ID=1
 # Application definition
 
 INSTALLED_APPS = [
