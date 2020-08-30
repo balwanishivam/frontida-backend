@@ -1,4 +1,0 @@
-{% load account %}{% user_display user as user_display %}{% load i18n %}{% autoescape off %}Greeting from Frontida!
-Thanks for registration {{ user_display }}.We welcome you to frontida family.
-{% endautoescape %}
-Thank you from Frontida
