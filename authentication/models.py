@@ -39,7 +39,7 @@ class User(AbstractBaseUser,PermissionsMixin):
 
     USERNAME_FIELD='email'
 
-    REQUIRED_FIELDS=['user_type']
+    REQUIRED_FIELDS=[]
 
     objects=UserManager()
     class Meta:
