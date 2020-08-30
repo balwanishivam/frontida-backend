@@ -22,7 +22,7 @@ class UserManager(BaseUserManager):
             raise TypeError('User should have a email')
         if password is None:
             raise TypeError('Password should not be none')
-        user=create_user(email,"ADMIN",password)
+        user=self.create_user(email,"ADMIN",password)
         user.is_staff=True
         user.is_suoeruser=True
         user.save()
