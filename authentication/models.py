@@ -71,10 +71,13 @@ class CustomUser(models.Model):
     user_type=models.CharField(max_length=15,choices=USER_TYPE,blank=False)
 
     def __str__(self):
-        return f'{self.user.username} Profile'
+        return f'{self.user.email} Profile'
 
     def save(self, *args, **kwargs):
         super.save()
+
+        self.user.username = str(self.user.email)
+
 
 
         
