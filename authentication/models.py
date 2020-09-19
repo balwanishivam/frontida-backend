@@ -5,13 +5,15 @@ from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
- 
+# from django.dispatch import receiver
+# from django.urls import reverse
+# from django_rest_passwordreset.signals import reset_password_token_created
+# from django.core.mail import send_mail 
 
 USER_TYPE=[
     ('MEDICAL STORE','MEDICAL STORE'),
     ('AMBULANCE','AMBULANCE')
 ]
-
 class UserManager(BaseUserManager):
     def create_user(self,email,user_type,password=None):
         if email is None:
@@ -40,10 +42,19 @@ class User(AbstractBaseUser,PermissionsMixin):
     is_active=models.BooleanField(default=True)
     is_staff=models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
+    created_at=models.DateTimeField(auto_now_add=True)
+    updated_at=models.DateTimeField(auto_now_add=True)
+    user_type=models.CharField(max_length=15,choices=USER_TYPE,blank=False)
 
+    USERNAME_FIELD='email'
 
+    REQUIRED_FIELDS=[]
 
-
+    objects=UserManager()
+    class Meta:
+        unique_together=(('email','user_type'),)
+    def __str__(self):
+        return self.email
 
 @receiver(post_save,sender=settings.AUTH_USER_MODEL)
 def create_auth_token(sender,instance=None,created=False,**kwargs):
@@ -51,6 +62,6 @@ def create_auth_token(sender,instance=None,created=False,**kwargs):
         Token.objects.create(user=instance)
 
 
-
-        
+# @receiver(reset_password_token_created)
+# def password_reset_token_created(sender, instance, reset_password_token, *args, **kwargs):
 
