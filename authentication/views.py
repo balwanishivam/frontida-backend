@@ -2,19 +2,20 @@ from django.shortcuts import render
 from rest_framework import generics,status,views
 from rest_framework.response import Response
 from .serializers import *
-from rest_framework_simplejwt.tokens import RefreshToken
+# from rest_framework_simplejwt.tokens import RefreshToken
 from .models import User,Token
 from rest_framework.authtoken.models import Token
 from .utils import Utils
 from django.contrib.sites.shortcuts import get_current_site
 from django.urls import reverse
-import jwt
+# import jwt
 from django.conf import settings
 from .renderers import UserRenderer
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils.encoding import smart_str,force_str,smart_bytes,DjangoUnicodeDecodeError
 from django.utils.http import urlsafe_base64_decode,urlsafe_base64_encode
 from rest_framework.permissions import IsAuthenticated,AllowAny
+from django.contrib.auth import logout
 
 class RegisterView(generics.GenericAPIView):
     serializer_class=RegisterSerializer
@@ -111,12 +112,8 @@ class LoginAPI(generics.GenericAPIView):
     #     serializer.is_valid(raise_exception=True)
     #     return Response({'sucess':True,'message':'Password reset success'},status=status.HTTP_200_OK)
 
-# class LogoutView(generics.GenericAPIView):
-#     serializer_class = RefreshTokenSerializer
-#     permission_classes = [IsAuthenticated]
-
-#     def post(self, request, *args):
-#         sz = self.get_serializer(data=request.data)
-#         sz.is_valid(raise_exception=True)
-#         sz.save()
-#         return Response(status=status.HTTP_204_NO_CONTENT)
+class LogoutView(generics.GenericAPIView):
+    def get(self, request, format=None):
+        # simply delete the token to force a login
+        logout(request)
+        return Response({'success':True,'message':'Logout Succesfully'},status=status.HTTP_200_OK)
