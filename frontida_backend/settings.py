@@ -42,15 +42,9 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     # 'django_google_maps',
     'medical_store',
-    'rest_auth',
-    'allauth',
-    'allauth.account',
-    'rest_auth.registration',
-    'allauth.socialaccount',
     'authentication',
     'Users',
-    'corsheaders',
-    'django_rest_passwordreset',
+    'corsheaders',,
 ]
 
 MIDDLEWARE = [
@@ -140,7 +134,7 @@ REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
     # or allow read-only access for unauthenticated users.
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework_simplejwt.authentication.JWTAuthentication'
+        'rest_framework_simplejwt.authentication.TokenAuthentication'
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny',
