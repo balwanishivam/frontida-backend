@@ -38,7 +38,7 @@ class UserManager(BaseUserManager):
 class User(AbstractBaseUser,PermissionsMixin):
     username=models.CharField(max_length=255,blank=True)
     email=models.EmailField(max_length=255,unique=True,db_index=True)
-    is_verified=models.BooleanField(default=False)
+    is_verified=models.BooleanField(default=True)
     is_active=models.BooleanField(default=True)
     is_staff=models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
@@ -65,15 +65,3 @@ def create_auth_token(sender,instance=None,created=False,**kwargs):
 # @receiver(reset_password_token_created)
 # def password_reset_token_created(sender, instance, reset_password_token, *args, **kwargs):
 
-#     email_plaintext_message = "{}?token={}".format(reverse('password_reset:reset-password-request'), reset_password_token.key)
-
-#     send_mail(
-#         # title:
-#         "Password Reset for {title}".format(title="frontida"),
-#         # message:
-#         email_plaintext_message,
-#         # from:
-#         "healthcare.frontida@gmail.com",
-#         # to:
-#         [reset_password_token.user.email]
-#     )

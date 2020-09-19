@@ -26,30 +26,28 @@ class RegisterView(generics.GenericAPIView):
         serializer.save()
         user_data=serializer.data
         user=User.objects.get(email=user_data['email'])
-        token=Token.objects.get(user=user).key
         current_site=get_current_site(request).domain
-        relativeLink=reverse('email-verify',kwargs={'id':user.id})
-        absurl='http://'+current_site+relativeLink+"?token="+token
-        email_body='Hi'+user.email+'Use link below to verify your email \n'+ absurl
-        data={'email_body':email_body,'email_subject':'Verify your Email','to_email':user.email}
+        absurl='http://'+current_site
+        email_body='Hi'+user.email+'Welcome to Frontida \n'+ absurl
+        data={'email_body':email_body,'email_subject':'Welcome to frontida family','to_email':user.email}
         Utils.send_email(data)
         return Response(user_data,status=status.HTTP_201_CREATED)
 
-class VerifyEmail(views.APIView):
-    permission_classes = [AllowAny]
-    def get(self,request,id):
-        user=User.objects.get(id=id)
-        print(user.id)
-        token=Token.objects.get(user=user).key 
-        try:
-            if not user.is_verified:
-                user.is_verified=True
-                user.save()
-            return Response({'email':user.email,'user_type':user.user_type,'Email':'Is Verified','token:':token},status=status.HTTP_200_OK)
-        except jwt.ExpiredSignatureError as identifier:
-            return Response({'error':'Activation Expired'},status=status.HTTP_400_BAD_REQUEST)
-        except jwt.exceptions.DecodeError as identifier:
-            return Response({'error':'Invalid Token'},status=status.HTTP_400_BAD_REQUEST)
+# class VerifyEmail(views.APIView):
+#     permission_classes = [AllowAny]
+#     def get(self,request,id):
+#         user=User.objects.get(id=id)
+#         print(user.id)
+#         token=Token.objects.get(user=user).key 
+#         try:
+#             if not user.is_verified:
+#                 user.is_verified=True
+#                 user.save()
+#             return Response({'email':user.email,'user_type':user.user_type,'Email':'Is Verified','token:':token},status=status.HTTP_200_OK)
+#         except jwt.ExpiredSignatureError as identifier:
+#             return Response({'error':'Activation Expired'},status=status.HTTP_400_BAD_REQUEST)
+#         except jwt.exceptions.DecodeError as identifier:
+#             return Response({'error':'Invalid Token'},status=status.HTTP_400_BAD_REQUEST)
         
 class LoginAPI(generics.GenericAPIView):
     serializer_class=LoginSerializer
