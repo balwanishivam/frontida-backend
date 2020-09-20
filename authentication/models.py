@@ -62,6 +62,18 @@ def create_auth_token(sender,instance=None,created=False,**kwargs):
         Token.objects.create(user=instance)
 
 
+#Store Details
+class UserDetails(models.Model):
+    store_name = models.CharField(max_length=100, unique=False)
+    store_owner = models.CharField(max_length=70)
+    address = models.CharField(max_length=500)
+    landmark = models.CharField(null=True, max_length=50)
+    city = models.CharField(max_length=50,choices=CITY)
+    pincode = models.PositiveIntegerField(validators=[MaxValueValidator(999999),MinValueValidator(100000)]) 
+    contact = models.PositiveIntegerField(validators=[MaxValueValidator(9999999999),MinValueValidator(1000000000)])
+    # location = GMaps
+    account = models.ForeignKey(User,on_delete=models.CASCADE)
+
 # @receiver(reset_password_token_created)
 # def password_reset_token_created(sender, instance, reset_password_token, *args, **kwargs):
 
