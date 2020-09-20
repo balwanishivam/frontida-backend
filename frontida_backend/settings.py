@@ -43,7 +43,6 @@ INSTALLED_APPS = [
     # 'django_google_maps',
     'medical_store',
     'authentication',
-    'Users',
     'corsheaders',
 ]
 
