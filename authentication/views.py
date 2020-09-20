@@ -2,13 +2,11 @@ from django.shortcuts import render
 from rest_framework import generics,status,views
 from rest_framework.response import Response
 from .serializers import *
-# from rest_framework_simplejwt.tokens import RefreshToken
-from .models import User,Token
+from .models import User,Token,UserDetails
 from rest_framework.authtoken.models import Token
 from .utils import Utils
 from django.contrib.sites.shortcuts import get_current_site
 from django.urls import reverse
-# import jwt
 from django.conf import settings
 from .renderers import UserRenderer
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
@@ -16,6 +14,8 @@ from django.utils.encoding import smart_str,force_str,smart_bytes,DjangoUnicodeD
 from django.utils.http import urlsafe_base64_decode,urlsafe_base64_encode
 from rest_framework.permissions import IsAuthenticated,AllowAny
 from django.contrib.auth import logout
+from rest_framework.views import APIView
+from rest_framework.authentication import TokenAuthentication
 
 class RegisterView(generics.GenericAPIView):
     serializer_class=RegisterSerializer
@@ -117,3 +117,21 @@ class LogoutView(generics.GenericAPIView):
         # simply delete the token to force a login
         logout(request)
         return Response({'success':True,'message':'Logout Succesfully'},status=status.HTTP_200_OK)
+    
+class UserDetailsCreate(APIView):
+    authentication_classes = [TokenAuthentication]
+    model=UserDetails
+    serializer_class = UserDetailsSerializers
+    def post(self,request):
+        serializer=UserDetailsSerializers(data=request.data)
+        user=request.user
+        print(user)
+        if serializer.is_valid():
+            serializer.save(account=request.user)
+            # user=User.objects.get(id=request.user.id)
+            # print(user.id)
+            # if not user.is_verified:
+            #    user.is_verified=True
+            #    user.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
