@@ -5,15 +5,24 @@ from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
-# from django.dispatch import receiver
-# from django.urls import reverse
-# from django_rest_passwordreset.signals import reset_password_token_created
-# from django.core.mail import send_mail 
-
+import datetime
+from django.core.validators import MaxValueValidator, MinValueValidator
 USER_TYPE=[
     ('MEDICAL STORE','MEDICAL STORE'),
     ('AMBULANCE','AMBULANCE')
 ]
+
+CITY=[
+    ('Jaipur','Jaipur'),
+    ('Kanpur','Kanpur'),
+    ('Jabalpur','Jabalpur'),
+    ('Indore','Indore'),
+    ('Nainital','Nainital'),
+    ('Ahmedabad','Ahmedabad'),
+    ('Gandinagar','Gandhinagar')
+]
+
+
 class UserManager(BaseUserManager):
     def create_user(self,email,user_type,password=None):
         if email is None:
@@ -38,7 +47,7 @@ class UserManager(BaseUserManager):
 class User(AbstractBaseUser,PermissionsMixin):
     username=models.CharField(max_length=255,blank=True)
     email=models.EmailField(max_length=255,unique=True,db_index=True)
-    is_verified=models.BooleanField(default=True)
+    is_verified=models.BooleanField(default=False)
     is_active=models.BooleanField(default=True)
     is_staff=models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
@@ -61,6 +70,18 @@ def create_auth_token(sender,instance=None,created=False,**kwargs):
     if created:
         Token.objects.create(user=instance)
 
+
+#Store Details
+class UserDetails(models.Model):
+    store_name = models.CharField(max_length=100, unique=False)
+    store_owner = models.CharField(max_length=70)
+    address = models.CharField(max_length=500)
+    landmark = models.CharField(null=True, max_length=50)
+    city = models.CharField(max_length=50,choices=CITY)
+    pincode = models.PositiveIntegerField(validators=[MaxValueValidator(999999),MinValueValidator(100000)]) 
+    contact = models.PositiveIntegerField(validators=[MaxValueValidator(9999999999),MinValueValidator(1000000000)])
+    # location = GMaps
+    account = models.ForeignKey(User,on_delete=models.CASCADE)
 
 # @receiver(reset_password_token_created)
 # def password_reset_token_created(sender, instance, reset_password_token, *args, **kwargs):
