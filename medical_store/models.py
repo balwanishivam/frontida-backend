@@ -5,11 +5,6 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from authentication.models import User
 
 
-<<<<<<< HEAD
-=======
-# Create your models here.
-
->>>>>>> 72ec0514f27534ac67ddb5c885ad7b3fd3974f3b
 TYPE=[
     ('Sales','Sales'),
     ('Purchase','Purchase')
@@ -29,15 +24,15 @@ class MedicineInventory(models.Model):
     sale_price = models.PositiveIntegerField()
     medicine_quantity = models.PositiveIntegerField()
     account = models.ForeignKey(User,on_delete=models.CASCADE)
-<<<<<<< HEAD
-=======
-
 
 class CompanyDetails(models.Model):
-    company_name = models.CharField(max_length=200)
-    company_code = models.CharField(max_length=20)
-    company_contact = models.IntegerField()
->>>>>>> 72ec0514f27534ac67ddb5c885ad7b3fd3974f3b
+    company_name = models.CharField(min_length=1,max_length=200)
+    company_code = models.CharField(min_length=1,max_length=20)
+    company_contact = models.PositiveIntegerField(validators=[MaxValueValidator(9999999999),MinValueValidator(1000000000)])
+    agent_name=models.CharField(min_length=1,max_lenght=200)
+    agent_contact = models.PositiveIntegerField(validators=[MaxValueValidator(9999999999),MinValueValidator(1000000000)])
+    company_address=models.CharField(max_lenght=200)
+    local_address=models.CharField(min_length=1,max_lenght=200)
 
 
 #Billing
