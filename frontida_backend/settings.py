@@ -140,13 +140,13 @@ REST_FRAMEWORK = {
         # 'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
     ]
 }
-EMAIL_USE_TLS= True
-EMAIL_HOST='smtp.gmail.com'
-EMAIL_PORT= 587
-EMAIL_HOST_USER='healthcare.frontida@gmail.com '
-EMAIL_HOST_PASSWORD='frontida@2020'
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'healthcare.frontida@gmail.com'
+EMAIL_HOST_PASSWORD = 'iicnoaupdzdaqgmf'
 
 import django_heroku
 django_heroku.settings(locals())
