@@ -66,12 +66,28 @@ class LoginSerializer(serializers.ModelSerializer):
 
         return super().validate(attrs)
 
-class ResetPasswordEmailRequestSerializer(serializers.ModelSerializer):
-    email=serializers.CharField(max_length=255)
+class PasswordResetEmailRequestSerializer(serializers.Serializer):
+    email=serializers.EmailField()
 
     class Meta:
-        model=User
-        fields=['email']
+        fields = ['email']
+
+class SetNewPasswordSerializer(serializers.Serializer):
+    password1 = serializers.CharField(min_length = 8)
+    password2 = serializers.CharField(min_length = 8)
+
+    class Meta:
+        fields = ['password1', 'password2']
+
+    def validate(self, attrs):
+        try:
+            pass1 = attrs.get('password1')
+            pass2 = attrs.get('password2')
+            if pass1 != pass2:
+                return Response({'error':'The two passwords do not match'})
+        except Exception as exp:
+            raise AuthenticationFailed(exp, 401)
+        return super().validate(attrs)
 
     # def validate(self,attrs):
     #     email=attrs['data'].get('email','')
@@ -88,25 +104,6 @@ class ResetPasswordEmailRequestSerializer(serializers.ModelSerializer):
     #         return attrs
         
         # return super().validate(attrs)
-
-class SetNewPasswordSerializer(serializers.ModelSerializer):
-    password=serializers.CharField(max_length=68,min_length=8,write_only=True)
-    password1=serializers.CharField(max_length=68,min_length=8,write_only=True)
-
-    class Meta:
-        model=User
-        fields=['password','password1']
-
-    def validate(self,attrs):
-        password=attrs.get('password','')
-        password1=attrs.get('password1','')
-        if password1 ==password:
-            return attrs
-        else:
-            raise AuthenticationFailed('Password does\'nt match')
-        return super().validate(attrs)
-
-
 
 
 # class RefreshTokenSerializer(serializers.Serializer):
