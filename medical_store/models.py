@@ -27,6 +27,11 @@ class MedicineInventory(models.Model):
     account = models.ForeignKey(User,on_delete=models.CASCADE)
 
 
+class CompanyDetails(models.Model):
+    company_name = models.CharField(max_length=200)
+    company_code = models.CharField(max_length=20)
+    company_contact = models.IntegerField()
+
 
 #Billing
 class Billing(models.Model):
