@@ -4,12 +4,8 @@ from .models import *
 class MedicineSerializers(ModelSerializer):
     class Meta:
         model=MedicineInventory
-        # exclude=['account',]
+        exclude=['account', 'HSNcode',]
 
-# class StoreDetailsSerializers(ModelSerializer):
-#     class Meta:
-#         model=StoreDetails
-#         # exclude=['account',]
 
 class BillingSerializers(ModelSerializer):
     class Meta:

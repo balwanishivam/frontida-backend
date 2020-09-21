@@ -5,6 +5,11 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from authentication.models import User
 
 
+<<<<<<< HEAD
+=======
+# Create your models here.
+
+>>>>>>> 72ec0514f27534ac67ddb5c885ad7b3fd3974f3b
 TYPE=[
     ('Sales','Sales'),
     ('Purchase','Purchase')
@@ -13,15 +18,26 @@ TYPE=[
 
 #Medicine Inventory
 class MedicineInventory(models.Model):
+    HSNcode=models.CharField(max_length=6, default='3004', blank=True)
     medicineid=models.CharField(max_length=5,primary_key=True)
+    batch_number=models.CharField(max_length=20,min_length=5)
     medicine_name = models.CharField(max_length=200)
-    company_name = models.CharField(max_length=200)
-    mfd = models.DateField()
-    expiry = models.DateField()
+    company_name = models.ForeignKey(CompanyDetails, max_length=200)
+    mfd = models.DateField(null=False)
+    expiry = models.DateField(null=False)
     purchase_price = models.PositiveIntegerField()
     sale_price = models.PositiveIntegerField()
     medicine_quantity = models.PositiveIntegerField()
     account = models.ForeignKey(User,on_delete=models.CASCADE)
+<<<<<<< HEAD
+=======
+
+
+class CompanyDetails(models.Model):
+    company_name = models.CharField(max_length=200)
+    company_code = models.CharField(max_length=20)
+    company_contact = models.IntegerField()
+>>>>>>> 72ec0514f27534ac67ddb5c885ad7b3fd3974f3b
 
 
 #Billing
