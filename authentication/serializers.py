@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from .models import User
+from .models import User,UserDetails
+from rest_framework.serializers import ModelSerializer
 from rest_framework.authtoken.models import Token
 from django.contrib import auth
 from rest_framework.exceptions import AuthenticationFailed
@@ -123,3 +124,8 @@ class SetNewPasswordSerializer(serializers.ModelSerializer):
 #             RefreshToken(self.token).blacklist()
 #         except TokenError:
 #             self.fail('bad_token')
+
+class UserDetailsSerializers(ModelSerializer):
+    class Meta:
+        model=UserDetails
+        exclude=['account',]

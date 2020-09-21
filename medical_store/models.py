@@ -2,9 +2,8 @@ from django.db import models
 # from django_google_maps import fields as map_fields
 import datetime
 from django.core.validators import MaxValueValidator, MinValueValidator
-# from users.models import User
+from authentication.models import User
 
-# Create your models here.
 
 TYPE=[
     ('Sales','Sales'),
@@ -26,11 +25,14 @@ class MedicineInventory(models.Model):
     medicine_quantity = models.PositiveIntegerField()
     account = models.ForeignKey(User,on_delete=models.CASCADE)
 
-
 class CompanyDetails(models.Model):
-    company_name = models.CharField(max_length=200)
-    company_code = models.CharField(max_length=20)
-    company_contact = models.IntegerField()
+    company_name = models.CharField(min_length=1,max_length=200)
+    company_code = models.CharField(min_length=1,max_length=20)
+    company_contact = models.PositiveIntegerField(validators=[MaxValueValidator(9999999999),MinValueValidator(1000000000)])
+    agent_name=models.CharField(min_length=1,max_lenght=200)
+    agent_contact = models.PositiveIntegerField(validators=[MaxValueValidator(9999999999),MinValueValidator(1000000000)])
+    company_address=models.CharField(max_lenght=200)
+    local_address=models.CharField(min_length=1,max_lenght=200)
 
 
 #Billing
@@ -41,7 +43,7 @@ class Billing(models.Model):
     cost = models.PositiveIntegerField()
     customer_name = models.CharField(null=True, max_length=50)
     customer_contact = models.PositiveIntegerField(validators=[MaxValueValidator(9999999999),MinValueValidator(1000000000)])
-    # account = models.ForeignKey(User,on_delete=models.CASCADE)
+    account = models.ForeignKey(User,on_delete=models.CASCADE)
 
 
 class Accounting(models.Model):
@@ -49,11 +51,11 @@ class Accounting(models.Model):
     sale_type=models.CharField(max_length=50,choices=TYPE)
     amount=models.PositiveIntegerField()
     date_time=models.DateTimeField(auto_now_add=False)
-    # account = models.ForeignKey(User,on_delete=models.CASCADE)
+    account = models.ForeignKey(User,on_delete=models.CASCADE)
 
-class Delivery(models.Model):
-    customer_address = models.CharField(max_length=200)
-    customer_contact = models.PositiveIntegerField(validators=[MaxValueValidator(9999999999),MinValueValidator(1000000000)])
-    time_of_order=models.DateTimeField(auto_now_add=False)
-    billing=models.ForeignKey(Billing,on_delete=models.CASCADE)
-    # account = models.ForeignKey(User,on_delete=models.CASCADE)
+# class Delivery(models.Model):
+#     customer_address = models.CharField(max_length=200)
+#     customer_contact = models.PositiveIntegerField(validators=[MaxValueValidator(9999999999),MinValueValidator(1000000000)])
+#     time_of_order=models.DateTimeField(auto_now_add=False)
+#     billing=models.ForeignKey(Billing,on_delete=models.CASCADE)
+#     account = models.ForeignKey(User,on_delete=models.CASCADE)
