@@ -125,4 +125,4 @@ class SetNewPasswordSerializer(serializers.Serializer):
 class UserDetailsSerializers(ModelSerializer):
     class Meta:
         model=UserDetails
-        exclude=['account','pincode','contact']
+        exclude=['account',]
