@@ -148,5 +148,5 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'healthcare.frontida@gmail.com'
 EMAIL_HOST_PASSWORD = 'iicnoaupdzdaqgmf'
 
-# import django_heroku
-# django_heroku.settings(locals())
+import django_heroku
+django_heroku.settings(locals())
