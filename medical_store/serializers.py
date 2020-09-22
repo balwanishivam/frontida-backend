@@ -4,8 +4,8 @@ from .models import *
 class MedicineInventorySerializers(ModelSerializer):
     class Meta:
         model=MedicineInventory
-        fields = ['batch_number', 'medicine_name', 'company_name', 'mfd', 'expiry', 'purchase_price', 'sale_price', 'medicine_quantity']
-        exclude=['account', 'HSNcode',]
+        fields = ['batch_number', 'medicine_name', 'mfd', 'expiry', 'purchase_price', 'sale_price', 'medicine_quantity']
+        exclude=['account', 'HSNcode', 'company_name']
 
 class CompanyDetailsSerializers(ModelSerializer):
     class Meta:
@@ -16,25 +16,26 @@ class CompanyDetailsSerializers(ModelSerializer):
 class Purchase(ModelSerializer):
     class Meta:
         model = Purchase
-        fields = ['distributor_name', 'company_name', 'bill_number', 'bill_date', 'total_amount', 'discount']
-        exclude = ['account']
+        fields = ['distributor_name', 'bill_number', 'bill_date', 'total_amount', 'discount']
+        exclude = ['account', 'company_name']
 
 class PurchaseInventory(ModelSerializer):
     class Meta:
         model = PurchaseInventory
         fields = ['medicine_name', 'quantity', 'batch_number', 'price_of_each', 'purchase_id']
+        exclude = ['discount']
 
 class Sales(ModelSerializer):
     class Meta:
         model = Sales
-        fields = ['customer_name', 'customer_contact', 'referred_by', 'bill_date', 'total_amount', 'discount']
+        fields = ['customer_name', 'customer_contact', 'referred_by', 'bill_date', 'total_amount']
         exclude = ['account']
 
 class SalesInventory(ModelSerializer):
     class Meta:
         model = SalesInventory
-        fields = ['medicine_name', 'quantity', 'batch_number', 'price_of_each', 'sales_id']
-        exclude = ['account']
+        fields = ['medicine_name', 'quantity', 'batch_number', 'price_of_each']
+        exclude = ['sales_id']
 
 #class BillingSerializers(ModelSerializer):
 #    class Meta:
