@@ -20,7 +20,7 @@ class MedicineInventory(models.Model):
     medicine_quantity = models.PositiveIntegerField()
     account = models.ForeignKey(User,on_delete=models.CASCADE)
 
-#     #create_buy and update_buy
+
 
 class CompanyDetails(models.Model):
     company_name = models.CharField(max_length=200)
