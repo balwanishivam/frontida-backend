@@ -25,7 +25,7 @@ SECRET_KEY = 'n@g5nm$#)r7p(enpdsyl#vk7v!x+s80j7t9kli9ngj@1&x56gy'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['frontida.herokuapp.com', '127.0.0.1']
+ALLOWED_HOSTS = ['frontida.herokuapp.com']
 AUTH_USER_MODEL='authentication.User'
 SITE_ID=1
 # Application definition
