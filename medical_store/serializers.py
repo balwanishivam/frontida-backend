@@ -22,13 +22,13 @@ class Purchase(ModelSerializer):
 class PurchaseInventory(ModelSerializer):
     class Meta:
         model = PurchaseInventory
-        fields = ['medicine_name', 'quantity', 'batch_number', 'price_of_each', 'purchase_id']
-        exclude = ['discount']
+        fields = ['medicine_name', 'quantity', 'batch_number', 'price_of_each']
+        exclude = ['purchase_id']
 
 class Sales(ModelSerializer):
     class Meta:
         model = Sales
-        fields = ['customer_name', 'customer_contact', 'referred_by', 'bill_date', 'total_amount']
+        fields = ['customer_name', 'customer_contact', 'referred_by', 'bill_date', 'total_amount', 'discount']
         exclude = ['account']
 
 class SalesInventory(ModelSerializer):
