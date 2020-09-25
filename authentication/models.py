@@ -79,7 +79,7 @@ class UserDetails(models.Model):
     landmark = models.CharField(null=True, max_length=50)
     city = models.CharField(max_length=50,choices=CITY)
     pincode = models.PositiveIntegerField() 
-    contact = models.PositiveIntegerField()
+    contact = models.BigIntegerField()
     # location = GMaps
     account = models.ForeignKey(User,on_delete=models.CASCADE)
 
