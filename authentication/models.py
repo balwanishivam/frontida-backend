@@ -71,7 +71,7 @@ def create_auth_token(sender,instance=None,created=False,**kwargs):
         Token.objects.create(user=instance)
 
 
-#Store Details
+#User Details
 class UserDetails(models.Model):
     store_name = models.CharField(max_length=100, unique=False)
     store_owner = models.CharField(max_length=70)
@@ -83,6 +83,5 @@ class UserDetails(models.Model):
     # location = GMaps
     account = models.ForeignKey(User,on_delete=models.CASCADE)
 
-# @receiver(reset_password_token_created)
-# def password_reset_token_created(sender, instance, reset_password_token, *args, **kwargs):
+
 
