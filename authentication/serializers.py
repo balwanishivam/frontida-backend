@@ -51,8 +51,7 @@ class LoginSerializer(serializers.ModelSerializer):
     def validate(self,attrs):
         email=attrs.get('email','')
         password=attrs.get('password','')
-        user=auth.authenticate(email=email,password=password)
-        if not user:
+z        if not user:
             raise AuthenticationFailed('Invalid credetials,try again')
         if not user.is_active:
             raise AuthenticationFailed('Account diabled,contact admin')
