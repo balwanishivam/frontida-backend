@@ -49,9 +49,11 @@ class LoginAPI(generics.GenericAPIView):
         serializer =self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         user_data=serializer.data
+        user=auth.authenticate(email=user_data['email'],password=user_data['password'])
+        auth.login(request,user)
         user=User.objects.get(email=user_data['email'])
         token=Token.objects.get(user=user).key
-        response_data = {'details': serializer.data,'token': token}
+        response_data = {'email': user_data['email'],'token': token}
         return Response(response_data,status=status.HTTP_200_OK)
 
 
