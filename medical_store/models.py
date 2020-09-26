@@ -1,3 +1,4 @@
+
 from django.db import models
 # from django_google_maps import fields as map_fields
 import datetime
@@ -11,7 +12,11 @@ class MedicineInventory(models.Model):
     HSNcode=models.CharField(max_length=6, default='3004', blank=True)
     batch_number=models.CharField(max_length=20)
     medicine_name = models.CharField(max_length=200)
+<<<<<<< HEAD
     company_name = models.ForeignKey('CompanyDetails', max_length=200, on_delete=models.DO_NOTHING)
+=======
+    company_name = models.ForeignKey('CompanyDetails',on_delete=models.DO_NOTHING)
+>>>>>>> c9bc038367709de01708b187e8e20bb2d45596e4
     mfd = models.DateField(null=False)
     expiry = models.DateField(null=False)
     purchase_price = models.PositiveIntegerField()
@@ -19,7 +24,7 @@ class MedicineInventory(models.Model):
     medicine_quantity = models.PositiveIntegerField()
     account = models.ForeignKey('User',on_delete=models.CASCADE)
 
-#     #create_buy and update_buy
+
 
 class CompanyDetails(models.Model):
     company_name = models.CharField(max_length=200)
@@ -27,7 +32,7 @@ class CompanyDetails(models.Model):
     company_address=models.CharField(max_length=200)
     company_email = models.EmailField()
     gst_number = models.CharField(max_length=15)
-    account = models.ForeignKey('User',on_delete=models.CASCADE)
+    account = models.ForeignKey(User,on_delete=models.CASCADE)
 
     def __str__(self):
         return self.company_name
@@ -35,12 +40,21 @@ class CompanyDetails(models.Model):
 
 class Purchase(models.Model):
     distributor_name = models.CharField(max_length=50)
+<<<<<<< HEAD
     company_name = models.ForeignKey('CompanyDetails', max_length=200, on_delete=models.DO_NOTHING)
     bill_number= models.CharField()
     bill_date= models.DateTimeField()
     total_amount= models.DecimalField(decimal_places=2, max_digits=10)
     discount = models.DecimalField(decimal_places=2, max_digits=4)
     account = models.ForeignKey('User',on_delete=models.CASCADE)
+=======
+    company_name = models.ForeignKey('CompanyDetails',on_delete=models.DO_NOTHING)
+    bill_number= models.CharField(max_length=10)
+    bill_date= models.DateTimeField()
+    total_amount= models.DecimalField(decimal_places=2, max_digits=10)
+    discount = models.DecimalField(decimal_places=2, max_digits=4)
+    account = models.ForeignKey(User,on_delete=models.CASCADE)
+>>>>>>> c9bc038367709de01708b187e8e20bb2d45596e4
 
     def __str__(self):
         return  self.id
@@ -60,7 +74,11 @@ class Sales(models.Model):
     bill_date= models.DateTimeField()
     total_amount= models.DecimalField(decimal_places=2, max_digits=10)
     discount = models.DecimalField(decimal_places=2, max_digits=4)
+<<<<<<< HEAD
     account = models.ForeignKey('User',on_delete=models.CASCADE)
+=======
+    account = models.ForeignKey(User,on_delete=models.CASCADE)
+>>>>>>> c9bc038367709de01708b187e8e20bb2d45596e4
 
     def __str__(self):
         return self.id
