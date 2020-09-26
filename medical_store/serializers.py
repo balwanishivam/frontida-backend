@@ -13,7 +13,6 @@ class CompanyDetailsSerializers(ModelSerializer):
     class Meta:
         model = CompanyDetails
         fields = ['company_name', 'company_contact', 'company_address', 'company_email', 'gst_number']
-        exclude = ['account']
 
 class Purchase(ModelSerializer):
     class Meta:
