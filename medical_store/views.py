@@ -49,26 +49,3 @@ class CompanyDetailsViewSets(ModelViewSet):
         if request.user.is_superuser:
             super().destroy(self, request, pk=None)
 
-
-
-
-
-
-     
-
-class PurchaseViewSets(ModelViewSet):
-    serializer_class = PurchaseSerializers
-    queryset = Purchase.objects.all()
-
-class PurchaseInventoryViewSets(ModelViewSet):
-    serializer_class = PurchaseInventorySerializers
-    queryset = PurchaseInventory.objects.all()
-
-class SalesViewSets(ModelViewSet):
-    serializer_class = SalesSerializers
-    queryset = Sales.objects.all()
-
-class SalesInventoryViewSets(ModelViewSet):
-    serializer_class = SalesInventorySerializers
-    queryset = SalesInventory.objects.all()
-
