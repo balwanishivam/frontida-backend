@@ -30,7 +30,7 @@ class RegisterView(generics.GenericAPIView):
         uidb64 = urlsafe_base64_encode(smart_bytes(user.id))
         token = Token.objects.get(user=user).key
         enter_details_link = reverse('user_details', kwargs={'uidb64': uidb64, 'token': token})
-        absurl = 'https://'+ 'frontida.herokuapp.com' + enter_details_link
+        absurl = 'http://'+ '127.0.0.1:8000' + enter_details_link
         subject = 'Account verification for ' + str(user.email)
         message = 'Hello, \n Thankyou for joining us, please follow the link to verify your account and complete your registration. \n' + absurl
         from_email = settings.EMAIL_HOST_USER
@@ -49,9 +49,11 @@ class LoginAPI(generics.GenericAPIView):
         serializer =self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         user_data=serializer.data
+        user=auth.authenticate(email=user_data['email'],password=user_data['password'])
+        auth.login(request,user)
         user=User.objects.get(email=user_data['email'])
         token=Token.objects.get(user=user).key
-        response_data = {'details': serializer.data,'token': token}
+        response_data = {'email': user_data['email'],'token': token}
         return Response(response_data,status=status.HTTP_200_OK)
 
 
@@ -111,7 +113,7 @@ class RequestPasswordResetEmail(generics.GenericAPIView):
             uidb64 = urlsafe_base64_encode(smart_bytes(user.id))
             token=Token.objects.get(user=user).key
             password_reset_link = reverse('password-reset-confirm', kwargs={'uidb64': uidb64, 'token': token})
-            absurl = 'https://'+ 'frontida.herokuapp.com' + password_reset_link
+            absurl = 'http://'+ '127.0.0.1:8000' + password_reset_link
             subject = 'Password reset link for ' + str(user.email)
             message = 'Hello, \n Below is the link to reset your password \n' + absurl
             from_email = settings.EMAIL_HOST_USER

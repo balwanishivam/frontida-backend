@@ -5,8 +5,8 @@ from .models import *
 class MedicineInventorySerializers(ModelSerializer):
     class Meta:
         model=MedicineInventory
-        fields = ['batch_number', 'medicine_name', 'mfd', 'expiry', 'purchase_price', 'sale_price', 'medicine_quantity']
-        exclude=['account', 'HSNcode', 'company_name']
+        fields = ['batch_number', 'medicine_name', 'mfd', 'expiry', 'purchase_price', 'sale_price', 'medicine_quantity', 'company_name']
+        exclude=['account', 'HSNcode']
 
 
 class CompanyDetailsSerializers(ModelSerializer):
