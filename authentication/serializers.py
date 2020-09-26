@@ -47,22 +47,6 @@ class LoginSerializer(serializers.ModelSerializer):
     class Meta:
         model=User
         fields=['email','password']
-    def validate(self,attrs):
-        email=attrs.get('email','')
-        password=attrs.get('password','')
-z        if not user:
-            raise AuthenticationFailed('Invalid credetials,try again')
-        if not user.is_active:
-            raise AuthenticationFailed('Account diabled,contact admin')
-        if not user.is_verified:
-            raise AuthenticationFailed('Email is not verified')
-        
-        return{
-            'email':user.email,
-            'user_type':user.user_type,
-        }
-
-        return super().validate(attrs)
 
 class PasswordResetEmailRequestSerializer(serializers.Serializer):
     email=serializers.EmailField()

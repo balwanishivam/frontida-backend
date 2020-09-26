@@ -28,3 +28,26 @@ class MedicineInventoryCreate(APIView):
     #         serializer.save()
     #         return Response(serializer.data, status=status.HTTP_201_CREATED)
     #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class MedicineInventoryDelete(APIResponse):
+    authentication_classes = [TokenAuthentication]
+    model=MedicineInventory
+    serializer_class = MedicineInventory
+
+    def post(self, request):
+
+
+class MedicineInventoryUpdate(APIView):
+    authentication_classes = [TokenAuthentication]
+    model=MedicineInventory
+    serializer_class = MedicineInventory
+
+    def post(self, request):
+
+
+class MedicineInventoryView(APIView):
+    authentication_classes = [TokenAuthentication]
+    model=MedicineInventory
+    serializer_class = MedicineInventory
+
+    def get(self, request):
