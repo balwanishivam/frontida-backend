@@ -43,28 +43,11 @@ class RegisterSerializer(serializers.ModelSerializer):
 
 class LoginSerializer(serializers.ModelSerializer):
     email=serializers.CharField(max_length=255)
-    password=serializers.CharField(max_length=68,min_length=8,write_only=True)
-    user_type=serializers.ChoiceField(choices=USER_TYPE,read_only=True)
+    password=serializers.CharField(max_length=68,min_length=8)
     class Meta:
         model=User
-        fields=['email','password','user_type']
-    def validate(self,attrs):
-        email=attrs.get('email','')
-        password=attrs.get('password','')
-        user=auth.authenticate(email=email,password=password)
-        if not user:
-            raise AuthenticationFailed('Invalid credetials,try again')
-        if not user.is_active:
-            raise AuthenticationFailed('Account diabled,contact admin')
-        if not user.is_verified:
-            raise AuthenticationFailed('Email is not verified')
-        
-        return{
-            'email':user.email,
-            'user_type':user.user_type,
-        }
-
-        return super().validate(attrs)
+        fields=['email','password']
+    
 
 class PasswordResetEmailRequestSerializer(serializers.Serializer):
     email=serializers.EmailField()
