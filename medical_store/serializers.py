@@ -1,11 +1,13 @@
 from rest_framework.serializers import ModelSerializer
 from .models import *
 
+
 class MedicineInventorySerializers(ModelSerializer):
     class Meta:
         model=MedicineInventory
         fields = ['batch_number', 'medicine_name', 'mfd', 'expiry', 'purchase_price', 'sale_price', 'medicine_quantity']
         exclude=['account', 'HSNcode', 'company_name']
+
 
 class CompanyDetailsSerializers(ModelSerializer):
     class Meta:

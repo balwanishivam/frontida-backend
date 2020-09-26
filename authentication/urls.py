@@ -13,7 +13,7 @@ urlpatterns =[
     # path('password_reset/',SetNewPasswordAPI.as_view(),name="password-reset"),
     # path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('logout/',LogoutView.as_view(),name='logout'),
-    path('user-details/',UserDetailsCreate.as_view(),name="user_details"),
+    path('user-details/<uidb64>/<token>/',UserDetailsCreate.as_view(),name="user_details"),
     path('request-reset-email/', RequestPasswordResetEmail.as_view(), name="request-reset-email"),
     path('password-reset-confirm/<uidb64>/<token>/', PasswordResetConfirm.as_view(), name="password-reset-confirm")
 ]
