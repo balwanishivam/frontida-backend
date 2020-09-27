@@ -45,11 +45,16 @@ class RegisterView(generics.GenericAPIView):
 class LoginAPI(generics.GenericAPIView):
     serializer_class=LoginSerializer
     permission_classes = [AllowAny]
+    def get(self, request):
+        print(request.user)
+        return Response({'yup': 'Lets try this'}, status=status.HTTP_200_OK)
     def post(self,request):
         serializer =self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         user_data=serializer.data
-        user=auth.authenticate(email=user_data['email'],password=user_data['password'])
+        user=auth.authenticate(request, email=user_data['email'],password=user_data['password'])
+        print(user)
+        print("\n \n \n")
         auth.login(request,user)
         user=User.objects.get(email=user_data['email'])
         token=Token.objects.get(user=user).key

@@ -25,7 +25,7 @@ SECRET_KEY = 'n@g5nm$#)r7p(enpdsyl#vk7v!x+s80j7t9kli9ngj@1&x56gy'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['frontida.herokuapp.com', '127.0.0.1']
+ALLOWED_HOSTS = ['frontida.herokuapp.com']
 AUTH_USER_MODEL='authentication.User'
 SITE_ID=1
 # Application definition
@@ -137,6 +137,7 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny',
+        # 'rest_framework.permissions.IsAuthenticated',
         # 'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
     ]
 }
@@ -148,5 +149,5 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'healthcare.frontida@gmail.com'
 EMAIL_HOST_PASSWORD = 'iicnoaupdzdaqgmf'
 
-# import django_heroku
-# django_heroku.settings(locals())
+import django_heroku
+django_heroku.settings(locals())
