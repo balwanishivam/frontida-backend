@@ -17,6 +17,8 @@ class MedicineInventoryCreate(APIView):
     permission_classes = [IsAuthenticated]
     model=StoreDetails
     serializer_class = MedicineInventorySerializers
+    # def get(self,request):
+
     def post(self,request):
         serializer=MedicineInventorySerializers(data=request.data)
         if serializer.is_valid():
