@@ -47,7 +47,6 @@ class LoginSerializer(serializers.ModelSerializer):
     class Meta:
         model=User
         fields=['email','password']
-    
 
 class PasswordResetEmailRequestSerializer(serializers.Serializer):
     email=serializers.EmailField()

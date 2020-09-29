@@ -15,6 +15,7 @@ class CompanyDetailsViewSets(ModelViewSet):
     permission_classes=[IsAuthenticated]
     authentication_classes=[TokenAuthentication]
 
+
     def list(self, request):
         if not request.user.is_authenticated:
             return Response({'error': 'User not logged  in'}, status=status.HTTP_401_UNAUTHORIZED)
@@ -116,3 +117,4 @@ class MedicineInventoryViewSets(viewsets.ViewSet):
 
     
         
+

@@ -5,20 +5,18 @@ import datetime
 from django.core.validators import MaxValueValidator, MinValueValidator
 from authentication.models import User
 
-
-
 #Medicine Inventory
 class MedicineInventory(models.Model):
     HSNcode=models.CharField(max_length=6, default='3004', blank=True)
     batch_number=models.CharField(max_length=20)
     medicine_name = models.CharField(max_length=200)
-    company_name = models.ForeignKey('CompanyDetails',on_delete=models.DO_NOTHING)
+    company_name = models.ForeignKey('CompanyDetails', max_length=200, on_delete=models.DO_NOTHING)
     mfd = models.DateField(null=False)
     expiry = models.DateField(null=False)
     purchase_price = models.PositiveIntegerField()
     sale_price = models.PositiveIntegerField()
     medicine_quantity = models.PositiveIntegerField()
-    account = models.ForeignKey(User,on_delete=models.CASCADE)
+    account = models.ForeignKey(User ,on_delete=models.CASCADE)
 
 
 

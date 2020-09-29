@@ -11,4 +11,3 @@ router.register("company_details", views.CompanyDetailsViewSets, basename="api-c
 #router.register("sales-inventory", views.SalesInventoryViewSets, basename="api-sales-inventory")
 
 urlpatterns = router.urls
-
