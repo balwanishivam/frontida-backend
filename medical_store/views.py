@@ -130,7 +130,7 @@ class MedicineInventoryViewSets(viewsets.ViewSet):
         if request.user.is_superuser:
             serializer = self.serializer_class(data=request.data)
             serializer.is_valid(raise_exception=True)
-            serializer.save()
+            serializer.save(account=request.user)
             return Response({'Comanay Details': serializer.data}, status=status.HTTP_200_OK)
             
     def retrieve(self, request, pk=None):
@@ -158,7 +158,7 @@ class MedicineInventoryViewSets(viewsets.ViewSet):
             instance.purchase_price = serializer.data['purchase_price']
             instance.sale_price = serializer.data['sale_price']
             instance.medicine_quantity = serializer.data['medicine_quantity']
-            instance.save()
+            instance.save(account=request.user)
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             return Response({'error': 'permission denied'}, status=status.HTTP_401_UNAUTHORIZED)
@@ -178,7 +178,7 @@ class MedicineInventoryViewSets(viewsets.ViewSet):
             instance.purchase_price = serializer.data['purchase_price']
             instance.sale_price = serializer.data['sale_price']
             instance.medicine_quantity = serializer.data['medicine_quantity']
-            instance.save()
+            instance.save(account=request.user)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
     def destroy(self, request, pk=None):
