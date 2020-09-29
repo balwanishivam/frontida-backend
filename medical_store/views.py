@@ -5,27 +5,32 @@ from medical_store.models import MedicineInventory, CompanyDetails, Purchase, Pu
 from medical_store.serializers import MedicineInventorySerializers, CompanyDetailsSerializers, PurchaseSerializers, PurchaseInventorySerializers, SalesSerializers, SalesInventorySerializers
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
-
-class MedicineInventoryViewSets(ModelViewSet):
-    serializer_class = MedicineInventorySerializers
-    queryset = MedicineInventory.objects.all()
+from rest_framework import viewsets
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.decorators import action
 
 class CompanyDetailsViewSets(ModelViewSet):
     serializer_class = CompanyDetailsSerializers
     queryset = CompanyDetails.objects.all()
+    permission_classes=[IsAuthenticated]
+    authentication_classes=[TokenAuthentication]
+
     def list(self, request):
         if not request.user.is_authenticated:
             return Response({'error': 'User not logged  in'}, status=status.HTTP_401_UNAUTHORIZED)
         serializer = self.serializer_class(self.queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @permission_classes(IsAuthenticated)
+    
     def create(self, request):
+        print(request.user)
         if not request.user.is_authenticated:
             return Response({'error': 'User not logged  in'}, status=status.HTTP_401_UNAUTHORIZED)
         if request.user.is_superuser:
             serializer = self.serializer_class(data=request.data)
             serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response({'Comanay Details': serializer.data}, status=status.HTTP_200_OK)
             
     def retrieve(self, request, pk=None):
         if not request.user.is_authenticated:
@@ -78,18 +83,36 @@ class CompanyDetailsViewSets(ModelViewSet):
             serializer.is_valid(raise_exception=True)
             instance.delete()
             return Response(serializer.data, status=status.HTTP_200_OK)
-          
-class MedicineInventoryCreate(APIView):
-    authentication_classes = [authentication.TokenAuthentication]
-    permission_classes = [IsAuthenticated]
-    model=StoreDetails
-    serializer_class = MedicineInventorySerializers
-    # def get(self,request):
 
-    def post(self,request):
-        serializer=MedicineInventorySerializers(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data,status=status.HTTP_201_CREATED)
-        else:
-            return Response({'error': 'permission denied'}, status=status.HTTP_401_UNAUTHORIZED)
+
+
+# class MedicineInventoryCreate(APIView):
+#     authentication_classes = [authentication.TokenAuthentication]
+#     permission_classes = [IsAuthenticated]
+#     model=StoreDetails
+#     serializer_class = MedicineInventorySerializers
+#     # def get(self,request):
+
+#     def post(self,request):
+#         serializer=MedicineInventorySerializers(data=request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data,status=status.HTTP_201_CREATED)
+#         else:
+#             return Response({'error': 'permission denied'}, status=status.HTTP_401_UNAUTHORIZED)
+
+class MedicineInventoryViewSets(viewsets.ViewSet):
+    queryset = MedicineInventory.objects.all()
+    serializer_class = MedicineInventorySerializers
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def list(self, request):
+        queryset = CompanyDetails.objects.all()
+        serializer = CompanyDetailsSerializers(queryset, many=True)
+        user_data=serializer.data
+        company_name=user_data['company_name']
+        return Response({'company_name':company_name},status=status.HTTP_200_OK)
+
+    
+        
