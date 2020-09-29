@@ -1,192 +1,84 @@
-from rest_framework.viewsets import ViewSet, ModelViewSet
-from rest_framework.response import Response
-from rest_framework import status
-from medical_store.models import MedicineInventory, CompanyDetails, Purchase, PurchaseInventory, Sales, SalesInventory
-from medical_store.serializers import MedicineInventorySerializers, CompanyDetailsSerializers, PurchaseSerializers, PurchaseInventorySerializers, SalesSerializers, SalesInventorySerializers
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.decorators import permission_classes
-from rest_framework import viewsets
-from rest_framework.authentication import TokenAuthentication
-from rest_framework.decorators import action
 
-class CompanyDetailsViewSets(ModelViewSet):
-    serializer_class = CompanyDetailsSerializers
-    queryset = CompanyDetails.objects.all()
-    permission_classes=[IsAuthenticated]
-    authentication_classes=[TokenAuthentication]
+from django.db import models
+# from django_google_maps import fields as map_fields
+import datetime
+from django.core.validators import MaxValueValidator, MinValueValidator
+from authentication.models import User
 
-
-    def list(self, request):
-        if not request.user.is_authenticated:
-            return Response({'error': 'User not logged  in'}, status=status.HTTP_401_UNAUTHORIZED)
-        serializer = self.serializer_class(self.queryset, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-# def list(self, request):
-#         queryset = CompanyDetails.objects.all()
-#         serializer = CompanyDetailsSerializers(queryset, many=True)
-#         user_data=serializer.data
-#         company_name=user_data['company_name']
-#         return Response({'company_name':company_name},status=status.HTTP_200_OK)
-    
-    def create(self, request):
-        print(request.user)
-        if not request.user.is_authenticated:
-            return Response({'error': 'User not logged  in'}, status=status.HTTP_401_UNAUTHORIZED)
-        if request.user.is_superuser:
-            serializer = self.serializer_class(data=request.data)
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-            return Response({'Comanay Details': serializer.data}, status=status.HTTP_200_OK)
-            
-    def retrieve(self, request, pk=None):
-        if not request.user.is_authenticated:
-            return Response({'error': 'User not logged  in'}, status=status.HTTP_401_UNAUTHORIZED)
-        try:
-            company = CompanyDetails.objects.get(pk=pk)
-        except:
-            return Response({'error': 'Company with given pk not found'}, status=status.HTTP_404_NOT_FOUND)
-        serializer = self.serializer_class(company)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-    def update(self, request, pk=None):
-        if not request.user.is_authenticated:
-            return Response({'error': 'User not logged  in'}, status=status.HTTP_401_UNAUTHORIZED)
-        if request.user.is_superuser:
-            instance = self.get_object()
-            serializer = self.serializer_class(data=request.data)
-            serializer.is_valid(raise_exception=True)
-            instance.company_name = serializer.data['company_name']
-            instance.company_contact = serializer.data['company_contact'] 
-            instance.company_address = serializer.data['company_address']
-            instance.company_email = serializer.data['company_email']
-            instance.gst_number = serializer.data['gst_number']
-            instance.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        else:
-            return Response({'error': 'permission denied'}, status=status.HTTP_401_UNAUTHORIZED)
-    
-    def partial_update(self, request, pk=None):
-        if not request.user.is_authenticated:
-            return Response({'error': 'User not logged  in'}, status=status.HTTP_401_UNAUTHORIZED)
-        if request.user.is_superuser:
-            instance = self.get_object()
-            serializer = self.serializer_class(data=request.data)
-            serializer.is_valid(raise_exception=True)
-            instance.company_name = serializer.data['company_name']
-            instance.company_contact = serializer.data['company_contact'] 
-            instance.company_address = serializer.data['company_address']
-            instance.company_email = serializer.data['company_email']
-            instance.gst_number = serializer.data['gst_number']
-            instance.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-
-    def destroy(self, request, pk=None):
-        if not request.user.is_authenticated:
-            return Response({'error': 'User not logged  in'}, status=status.HTTP_401_UNAUTHORIZED)
-        if request.user.is_superuser:
-            instance = self.get_object()
-            serializer = self.serializer_class(data=instance)
-            serializer.is_valid(raise_exception=True)
-            instance.delete()
-            return Response(serializer.data, status=status.HTTP_200_OK)
+#Medicine Inventory
+class MedicineInventory(models.Model):
+    HSNcode=models.CharField(max_length=6, default='3004', blank=True)
+    batch_number=models.CharField(max_length=20)
+    medicine_name = models.CharField(max_length=200)
+    company_name = models.ForeignKey('CompanyDetails', max_length=200, on_delete=models.DO_NOTHING)
+    mfd = models.DateField(null=False)
+    expiry = models.DateField(null=False)
+    purchase_price = models.PositiveIntegerField()
+    sale_price = models.PositiveIntegerField()
+    medicine_quantity = models.PositiveIntegerField()
+    account = models.ForeignKey(User ,on_delete=models.CASCADE)
 
 
 
-# class MedicineInventoryCreate(APIView):
-#     authentication_classes = [authentication.TokenAuthentication]
-#     permission_classes = [IsAuthenticated]
-#     model=StoreDetails
-#     serializer_class = MedicineInventorySerializers
-#     # def get(self,request):
+class CompanyDetails(models.Model):
+    company_name = models.CharField(max_length=200)
+    company_contact = models.BigIntegerField(validators=[MaxValueValidator(9999999999),MinValueValidator(1000000000)])
+    company_address=models.CharField(max_length=200)
+    company_email = models.EmailField()
+    gst_number = models.CharField(max_length=15)
 
-#     def post(self,request):
-#         serializer=MedicineInventorySerializers(data=request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data,status=status.HTTP_201_CREATED)
-#         else:
-#             return Response({'error': 'permission denied'}, status=status.HTTP_401_UNAUTHORIZED)
+    def __str__(self):
+        return self.company_name
 
-class MedicineInventoryViewSets(viewsets.ViewSet):
-    queryset = MedicineInventory.objects.all()
-    serializer_class = MedicineInventorySerializers
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
 
-    def list(self, request):
-        queryset = CompanyDetails.objects.all()
-        serializer = CompanyDetailsSerializers(queryset, many=True)
-        user_data=serializer.data
-        company_name=user_data['company_name']
-        return Response({'company_name':company_name},status=status.HTTP_200_OK)
+class Purchase(models.Model):
+    distributor_name = models.CharField(max_length=50)
+    company_name = models.ForeignKey('CompanyDetails',on_delete=models.DO_NOTHING)
+    bill_number= models.CharField(max_length=10)
+    bill_date= models.DateTimeField()
+    total_amount= models.DecimalField(decimal_places=2, max_digits=10)
+    discount = models.DecimalField(decimal_places=2, max_digits=4)
+    account = models.ForeignKey(User,on_delete=models.CASCADE)
 
-    
-    def create(self, request):
-        print(request.user)
-        if not request.user.is_authenticated:
-            return Response({'error': 'User not logged  in'}, status=status.HTTP_401_UNAUTHORIZED)
-        if request.user.is_superuser:
-            serializer = self.serializer_class(data=request.data)
-            serializer.is_valid(raise_exception=True)
-            serializer.save(account=request.user)
-            return Response({'Comanay Details': serializer.data}, status=status.HTTP_200_OK)
-            
-    def retrieve(self, request, pk=None):
-        if not request.user.is_authenticated:
-            return Response({'error': 'User not logged  in'}, status=status.HTTP_401_UNAUTHORIZED)
-        try:
-            inventory = MedicineInventory.objects.get(medicine_name)
-        except:
-            return Response({'error': 'Medicine with given name not found'}, status=status.HTTP_404_NOT_FOUND)
-        serializer = self.serializer_class(medicine)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+    def __str__(self):
+        return  self.id
 
-    def update(self, request, pk=None):
-        if not request.user.is_authenticated:
-            return Response({'error': 'User not logged  in'}, status=status.HTTP_401_UNAUTHORIZED)
-        if request.user.is_superuser:
-            instance = self.get_object()
-            serializer = self.serializer_class(data=request.data)
-            serializer.is_valid(raise_exception=True)
-            instance.batch_number = serializer.data['batch_number']
-            instance.medicine_name = serializer.data['medicine_name'] 
-            # instance.company_name = serializer.data['company_name']
-            instance.mfd = serializer.data['mfd']
-            instance.expiry = serializer.data['expiry']
-            instance.purchase_price = serializer.data['purchase_price']
-            instance.sale_price = serializer.data['sale_price']
-            instance.medicine_quantity = serializer.data['medicine_quantity']
-            instance.save(account=request.user)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        else:
-            return Response({'error': 'permission denied'}, status=status.HTTP_401_UNAUTHORIZED)
-    
-    def partial_update(self, request, pk=None):
-        if not request.user.is_authenticated:
-            return Response({'error': 'User not logged  in'}, status=status.HTTP_401_UNAUTHORIZED)
-        if request.user.is_superuser:
-            instance = self.get_object()
-            serializer = self.serializer_class(data=request.data)
-            serializer.is_valid(raise_exception=True)
-            instance.batch_number = serializer.data['batch_number']
-            instance.medicine_name = serializer.data['medicine_name'] 
-            # instance.company_name = serializer.data['company_name']
-            instance.mfd = serializer.data['mfd']
-            instance.expiry = serializer.data['expiry']
-            instance.purchase_price = serializer.data['purchase_price']
-            instance.sale_price = serializer.data['sale_price']
-            instance.medicine_quantity = serializer.data['medicine_quantity']
-            instance.save(account=request.user)
-            return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def destroy(self, request, pk=None):
-        if not request.user.is_authenticated:
-            return Response({'error': 'User not logged  in'}, status=status.HTTP_401_UNAUTHORIZED)
-        if request.user.is_superuser:
-            instance = self.get_object()
-            serializer = self.serializer_class(data=instance)
-            serializer.is_valid(raise_exception=True)
-            instance.delete()
-            return Response(serializer.data, status=status.HTTP_200_OK)
+class PurchaseInventory(models.Model):
+    medicine_name = models.CharField(max_length=200)
+    quantity = models.IntegerField()
+    batch_number = models.CharField(max_length=20)
+    price_of_each= models.PositiveIntegerField()
+    purchase_id= models.ForeignKey('Purchase', on_delete=models.DO_NOTHING)
+
+class Sales(models.Model):
+    customer_name = models.CharField(max_length=50)
+    customer_contact = models.PositiveIntegerField(validators=[MaxValueValidator(9999999999),MinValueValidator(1000000000)])
+    referred_by = models.CharField(max_length=50)
+    bill_date= models.DateTimeField()
+    total_amount= models.DecimalField(decimal_places=2, max_digits=10)
+    discount = models.DecimalField(decimal_places=2, max_digits=4)
+    account = models.ForeignKey(User,on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.id
+
+
+class SalesInventory(models.Model):
+    medicine_name = models.CharField(max_length=200)
+    quantity = models.IntegerField()
+    #prescription = models.CharField(max_length=)
+    batch_number = models.CharField(max_length=20)
+    price_of_each= models.PositiveIntegerField()
+    sales_id = models.ForeignKey('Sales', on_delete=models.DO_NOTHING)
+
+
+
+
+
+# class Delivery(models.Model):
+#     customer_address = models.CharField(max_length=200)
+#     customer_contact = models.PositiveIntegerField(validators=[MaxValueValidator(9999999999),MinValueValidator(1000000000)])
+#     time_of_order=models.DateTimeField(auto_now_add=False)
+#     billing=models.ForeignKey(Billing,on_delete=models.CASCADE)
+#     account = models.ForeignKey(User,on_delete=models.CASCADE)

@@ -47,7 +47,6 @@ class LoginSerializer(serializers.ModelSerializer):
     class Meta:
         model=User
         fields=['email','password']
-    
 
 class PasswordResetEmailRequestSerializer(serializers.Serializer):
     email=serializers.EmailField()
@@ -116,4 +115,3 @@ class UserDetailsSerializers(ModelSerializer):
         if attrs.get('contact') not in range(6000000000, 9999999999):
             return Response({'error': 'Invalid contact number'})
         return super().validate(attrs)
-

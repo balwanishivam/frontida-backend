@@ -16,6 +16,8 @@ from rest_framework.permissions import IsAuthenticated,AllowAny
 from django.contrib.auth import logout
 from rest_framework.views import APIView
 from rest_framework.authentication import TokenAuthentication
+from rest_framework.decorators import  permission_classes
+from django.core.exceptions import ObjectDoesNotExist
 
 class RegisterView(generics.GenericAPIView):
     serializer_class=RegisterSerializer
@@ -52,22 +54,36 @@ class LoginAPI(generics.GenericAPIView):
         serializer =self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         user_data=serializer.data
-        user=auth.authenticate(request, email=user_data['email'],password=user_data['password'])
-        print(user)
-        print("\n \n \n")
+        user=auth.authenticate(email=user_data['email'],password=user_data['password'])
+        if not user:
+            return Response({'detail': 'Invalid Credentials or activate account'}, status=status.HTTP_404_NOT_FOUND)
         auth.login(request,user)
         user=User.objects.get(email=user_data['email'])
-        token=Token.objects.get(user=user).key
+        token = Token.objects.get(user=user).key
+        # token, _ = Token.objects.get_or_create(user = user)
         response_data = {'email': user_data['email'],'token': token}
         return Response(response_data,status=status.HTTP_200_OK)
 
 
 class LogoutView(generics.GenericAPIView):
-    def get(self, request, format=None):
-        # simply delete the token to force a login
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    def get(self, request):
+        return self.logout(request)
+    def logout(self, request):
+        try:
+            # print(request.user)
+            request.user.auth_token.delete()
+            token = Token.objects.create(user = request.user)
+            # print(token)
+        except Exception as exp:
+            raise AuthenticationFailed(exp, 401)
+
         logout(request)
-        return Response({'success':True,'message':'Logout Succesfully'},status=status.HTTP_200_OK)
-    
+        return Response({"success": "Successfully logged out."},
+                        status=status.HTTP_200_OK)
+
+
 class UserDetailsCreate(APIView):
     authentication_classes = [TokenAuthentication]
     model=UserDetails
