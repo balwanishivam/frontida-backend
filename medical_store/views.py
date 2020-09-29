@@ -190,3 +190,4 @@ class MedicineInventoryViewSets(viewsets.ViewSet):
             serializer.is_valid(raise_exception=True)
             instance.delete()
             return Response(serializer.data, status=status.HTTP_200_OK)
+
