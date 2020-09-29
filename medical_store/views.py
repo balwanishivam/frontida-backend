@@ -20,7 +20,6 @@ class CompanyDetailsViewSets(ModelViewSet):
         serializer = self.serializer_class(self.queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @permission_classes(IsAuthenticated)
     def create(self, request):
         if not request.user.is_authenticated:
             return Response({'error': 'User not logged  in'}, status=status.HTTP_401_UNAUTHORIZED)
