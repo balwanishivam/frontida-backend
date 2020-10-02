@@ -82,5 +82,3 @@ class SalesInventory(models.Model):
 #     time_of_order=models.DateTimeField(auto_now_add=False)
 #     billing=models.ForeignKey(Billing,on_delete=models.CASCADE)
 #     account = models.ForeignKey(User,on_delete=models.CASCADE)
-
-
