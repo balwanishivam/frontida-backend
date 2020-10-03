@@ -39,6 +39,8 @@ class CompanyDetailsViewSets(ModelViewSet):
             serializer.is_valid(raise_exception=True)
             serializer.save()
             return Response({'Comanay Details': serializer.data}, status=status.HTTP_200_OK)
+        else:
+            return Response({'error': 'permission denied'}, status=status.HTTP_401_UNAUTHORIZED)
             
     def retrieve(self, request, pk=None):
         if not request.user.is_authenticated:
@@ -81,6 +83,8 @@ class CompanyDetailsViewSets(ModelViewSet):
             instance.gst_number = serializer.data['gst_number']
             instance.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response({'error': 'permission denied'}, status=status.HTTP_401_UNAUTHORIZED)
 
     def destroy(self, request, pk=None):
         if not request.user.is_authenticated:
