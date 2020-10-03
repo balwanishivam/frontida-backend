@@ -1,4 +1,5 @@
 from rest_framework.viewsets import ViewSet, ModelViewSet
+from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from medical_store.models import MedicineInventory, CompanyDetails, Purchase, PurchaseInventory, Sales, SalesInventory
@@ -195,3 +196,11 @@ class MedicineInventoryViewSets(viewsets.ViewSet):
             instance.delete()
             return Response(serializer.data, status=status.HTTP_200_OK)
 
+class PurchaseView(APIView):
+    def post(self, request, *args, **kwargs):
+        serializer = PurchaseSerializers(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        company = CompanyDetails.objects.get(company_name = "Sun Pharma")
+        purchase = serializer.save(account = request.user, company_name = company)
+        # serializer = PurchaseSerializers(purchase)
+        return Response({'success: created'}, status=status.HTTP_201_CREATED)

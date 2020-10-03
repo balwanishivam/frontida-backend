@@ -35,13 +35,13 @@ class Purchase(models.Model):
     distributor_name = models.CharField(max_length=50)
     company_name = models.ForeignKey('CompanyDetails',on_delete=models.DO_NOTHING)
     bill_number= models.CharField(max_length=10)
-    bill_date= models.DateTimeField()
+    bill_date= models.DateField(null=True)
     total_amount= models.DecimalField(decimal_places=2, max_digits=10)
     discount = models.DecimalField(decimal_places=2, max_digits=4)
     account = models.ForeignKey(User,on_delete=models.CASCADE)
 
     def __str__(self):
-        return  self.id
+        return  self.bill_number
 
 
 class PurchaseInventory(models.Model):
@@ -49,7 +49,10 @@ class PurchaseInventory(models.Model):
     quantity = models.IntegerField()
     batch_number = models.CharField(max_length=20)
     price_of_each= models.PositiveIntegerField()
-    purchase_id= models.ForeignKey('Purchase', on_delete=models.DO_NOTHING)
+    purchase = models.ForeignKey('Purchase', on_delete=models.DO_NOTHING)
+
+    def __str__(self):
+        return self.batch_number
 
 class Sales(models.Model):
     customer_name = models.CharField(max_length=50)
