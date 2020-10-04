@@ -196,11 +196,33 @@ class MedicineInventoryViewSets(viewsets.ViewSet):
             instance.delete()
             return Response(serializer.data, status=status.HTTP_200_OK)
 
-class PurchaseView(APIView):
-    def post(self, request, *args, **kwargs):
-        serializer = PurchaseSerializers(data=request.data)
+class PurchaseViewSets(ModelViewSet):
+    queryset = Purchase.objects.all()
+    serializer_class = PurchaseSerializers
+    permission_classes = [IsAuthenticated]
+    authentication_classes=[TokenAuthentication]
+
+    def list(self, request):
+        if not request.user.is_authenticated:
+            return Response({'error': 'User not logged  in'}, status=status.HTTP_401_UNAUTHORIZED)
+        purchases = Purchase.objects.filter(account = request.user)
+        serializer = self.serializer_class(purchases, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def create(self, request):
+        if not request.user.is_authenticated:
+            return Response({'error': 'User not logged  in'}, status=status.HTTP_401_UNAUTHORIZED)
+        serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
-        company = CompanyDetails.objects.get(company_name = "Sun Pharma")
-        purchase = serializer.save(account = request.user, company_name = company)
-        # serializer = PurchaseSerializers(purchase)
-        return Response({'success: created'}, status=status.HTTP_201_CREATED)
+        company = CompanyDetails.objects.get(company_name="Sun Pharma")
+        purchase = serializer.save(account=request.user, company_name=company)
+        serializer = PurchaseSerializers(instance = purchase)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    
+    def retrieve(self, request, pk=None):
+        try:
+            purchase = Purchase.objects.get(pk=pk)
+            serializer = self.serializer_class(purchase)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Purchase.DoesNotExist as exp:
+            return Response(exp, status=status.HTTP_400_BAD_REQUEST)
