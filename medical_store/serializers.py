@@ -17,25 +17,24 @@ class CompanyDetailsSerializers(ModelSerializer):
 class PurchaseInventorySerializers(ModelSerializer):
     class Meta:
         model = PurchaseInventory
-        # fields = ['medicine_name', 'quantity', 'batch_number', 'price_of_each']
-        exclude = ['purchase']
+        fields = ['medicine_name', 'quantity', 'batch_number', 'price_of_each']
 
 class PurchaseSerializers(ModelSerializer):
 
     purchase_inventory = PurchaseInventorySerializers(many=True)
     class Meta:
         model = Purchase
-        # fields = ['distributor_name', 'bill_number', 'bill_date', 'total_amount', 'discount']
-        exclude = ['account', 'company_name', 'bill_date']
+        fields = ['distributor_name', 'bill_number', 'bill_date', 'total_amount', 'discount', 'purchase_inventory']
     
     def create(self, validated_data):
         purchase_inventory_validated = validated_data.pop('purchase_inventory')
+        
+        # all_companies = CompanyDetails.objects.all()
+        # if company_name not in all_companies
+        #     return Response({'error': CompanyDetails.DoesNotExist} ,status=status.HTTP_400_BAD_REQUEST)
         purchase = Purchase.objects.create(**validated_data)
-        purchase_inventory_serializers = self.fields['purchase_inventory']
         for entry in purchase_inventory_validated:
-            print(entry)
-            entry['purchase'] = purchase
-        purchase_inventories = purchase_inventory_serializers.create(purchase_inventory_validated)
+            PurchaseInventory.objects.create(purchase=purchase, **entry)
         return purchase
 
 class SalesSerializers(ModelSerializer):
