@@ -123,7 +123,6 @@
 #         return Response({'company_name':company_name},status=status.HTTP_200_OK)
 
     
-<<<<<<< HEAD
 #     def create(self, request):
 #         print(request.user)
 #         if not request.user.is_authenticated:
@@ -161,88 +160,6 @@
 #             instance.medicine_quantity = serializer.data['medicine_quantity']
 #             instance.save(account=request.user)
 #             return Response(serializer.data, status=status.HTTP_200_OK)
-=======
-    def create(self, request):
-        print(request.user)
-        if not request.user.is_authenticated:
-            return Response({'error': 'User not logged  in'}, status=status.HTTP_401_UNAUTHORIZED)
-        if request.user.is_superuser:
-            serializer = self.serializer_class(data=request.data)
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-            return Response({'Comanay Details': serializer.data}, status=status.HTTP_200_OK)
-        else:
-            return Response({'error': 'permission denied'}, status=status.HTTP_401_UNAUTHORIZED)
-            
-    def retrieve(self, request, pk=None):
-        if not request.user.is_authenticated:
-            return Response({'error': 'User not logged  in'}, status=status.HTTP_401_UNAUTHORIZED)
-        try:
-            company = CompanyDetails.objects.get(pk=pk)
-        except:
-            return Response({'error': 'Company with given pk not found'}, status=status.HTTP_404_NOT_FOUND)
-        serializer = self.serializer_class(company)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-    def update(self, request, pk=None):
-        if not request.user.is_authenticated:
-            return Response({'error': 'User not logged  in'}, status=status.HTTP_401_UNAUTHORIZED)
-        if request.user.is_superuser:
-            instance = self.get_object()
-            serializer = self.serializer_class(data=request.data)
-            serializer.is_valid(raise_exception=True)
-            instance.company_name = serializer.data['company_name']
-            instance.company_contact = serializer.data['company_contact'] 
-            instance.company_address = serializer.data['company_address']
-            instance.company_email = serializer.data['company_email']
-            instance.gst_number = serializer.data['gst_number']
-            instance.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        else:
-            return Response({'error': 'permission denied'}, status=status.HTTP_401_UNAUTHORIZED)
-    
-    def partial_update(self, request, pk=None):
-        if not request.user.is_authenticated:
-            return Response({'error': 'User not logged  in'}, status=status.HTTP_401_UNAUTHORIZED)
-        if request.user.is_superuser:
-            instance = self.get_object()
-            serializer = self.serializer_class(data=request.data)
-            serializer.is_valid(raise_exception=True)
-            instance.company_name = serializer.data['company_name']
-            instance.company_contact = serializer.data['company_contact'] 
-            instance.company_address = serializer.data['company_address']
-            instance.company_email = serializer.data['company_email']
-            instance.gst_number = serializer.data['gst_number']
-            instance.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        else:
-            return Response({'error': 'permission denied'}, status=status.HTTP_401_UNAUTHORIZED)
-
-    def destroy(self, request, pk=None):
-        if not request.user.is_authenticated:
-            return Response({'error': 'User not logged  in'}, status=status.HTTP_401_UNAUTHORIZED)
-        if request.user.is_superuser:
-            instance = self.get_object()
-            serializer = self.serializer_class(data=instance)
-            serializer.is_valid(raise_exception=True)
-            instance.delete()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-
-# class MedicineInventoryCreate(APIView):
-#     authentication_classes = [authentication.TokenAuthentication]
-#     permission_classes = [IsAuthenticated]
-#     model=StoreDetails
-#     serializer_class = MedicineInventorySerializers
-#     # def get(self,request):
-
-#     def post(self,request):
-#         serializer=MedicineInventorySerializers(data=request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data,status=status.HTTP_201_CREATED)
->>>>>>> 49ea5de539add091ba4f0dfc20f7858c9ac4a9b2
 #         else:
 #             return Response({'error': 'permission denied'}, status=status.HTTP_401_UNAUTHORIZED)
     
@@ -274,33 +191,33 @@
 #             instance.delete()
 #             return Response(serializer.data, status=status.HTTP_200_OK)
 
-class PurchaseViewSets(ModelViewSet):
-    queryset = Purchase.objects.all()
-    serializer_class = PurchaseSerializers
-    permission_classes = [IsAuthenticated]
-    authentication_classes=[TokenAuthentication]
+# class PurchaseViewSets(ModelViewSet):
+#     queryset = Purchase.objects.all()
+#     serializer_class = PurchaseSerializers
+#     permission_classes = [IsAuthenticated]
+#     authentication_classes=[TokenAuthentication]
 
-    def list(self, request):
-        if not request.user.is_authenticated:
-            return Response({'error': 'User not logged  in'}, status=status.HTTP_401_UNAUTHORIZED)
-        purchases = Purchase.objects.filter(account = request.user)
-        serializer = self.serializer_class(purchases, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+#     def list(self, request):
+#         if not request.user.is_authenticated:
+#             return Response({'error': 'User not logged  in'}, status=status.HTTP_401_UNAUTHORIZED)
+#         purchases = Purchase.objects.filter(account = request.user)
+#         serializer = self.serializer_class(purchases, many=True)
+#         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def create(self, request):
-        if not request.user.is_authenticated:
-            return Response({'error': 'User not logged  in'}, status=status.HTTP_401_UNAUTHORIZED)
-        serializer = self.serializer_class(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        company = CompanyDetails.objects.get(company_name="Sun Pharma")
-        purchase = serializer.save(account=request.user, company_name=company)
-        serializer = PurchaseSerializers(instance = purchase)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+#     def create(self, request):
+#         if not request.user.is_authenticated:
+#             return Response({'error': 'User not logged  in'}, status=status.HTTP_401_UNAUTHORIZED)
+#         serializer = self.serializer_class(data=request.data)
+#         serializer.is_valid(raise_exception=True)
+#         company = CompanyDetails.objects.get(company_name="Sun Pharma")
+#         purchase = serializer.save(account=request.user, company_name=company)
+#         serializer = PurchaseSerializers(instance = purchase)
+#         return Response(serializer.data, status=status.HTTP_201_CREATED)
     
-    def retrieve(self, request, pk=None):
-        try:
-            purchase = Purchase.objects.get(pk=pk)
-            serializer = self.serializer_class(purchase)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except Purchase.DoesNotExist as exp:
-            return Response(exp, status=status.HTTP_400_BAD_REQUEST)
+#     def retrieve(self, request, pk=None):
+#         try:
+#             purchase = Purchase.objects.get(pk=pk)
+#             serializer = self.serializer_class(purchase)
+#             return Response(serializer.data, status=status.HTTP_200_OK)
+#         except Purchase.DoesNotExist as exp:
+#             return Response(exp, status=status.HTTP_400_BAD_REQUEST)
