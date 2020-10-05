@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # from rest_framework.viewsets import ViewSet, ModelViewSet
 # from rest_framework.response import Response
 # from rest_framework import status
@@ -117,35 +116,6 @@
 #     permission_classes = [IsAuthenticated]
 
 #     def list(self, request):
-=======
-from rest_framework.viewsets import ViewSet, ModelViewSet
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from medical_store.models import MedicineInventory, CompanyDetails, Purchase, PurchaseInventory, Sales, SalesInventory
-from medical_store.serializers import MedicineInventorySerializers, CompanyDetailsSerializers, PurchaseSerializers, PurchaseInventorySerializers, SalesSerializers, SalesInventorySerializers
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.decorators import permission_classes
-from rest_framework import viewsets
-from rest_framework.authentication import TokenAuthentication
-from rest_framework.decorators import action
-
-class CompanyDetailsViewSets(ModelViewSet):
-    serializer_class = CompanyDetailsSerializers
-    queryset = CompanyDetails.objects.all()
-    permission_classes=[IsAuthenticated]
-    authentication_classes=[TokenAuthentication]
-
-
-    def list(self, request):
-        if not request.user.is_authenticated:
-            return Response({'error': 'User not logged  in'}, status=status.HTTP_401_UNAUTHORIZED)
-        serializer = self.serializer_class(self.queryset, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-# def list(self, request):
->>>>>>> 49ea5de539add091ba4f0dfc20f7858c9ac4a9b2
 #         queryset = CompanyDetails.objects.all()
 #         serializer = CompanyDetailsSerializers(queryset, many=True)
 #         user_data=serializer.data
