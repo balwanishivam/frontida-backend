@@ -33,8 +33,8 @@ class RegisterView(generics.GenericAPIView):
         token = Token.objects.get(user=user).key
         enter_details_link = reverse('user_details', kwargs={'uidb64': uidb64, 'token': token})
 
-        current_site = get_current_site(request)
-        absurl = 'http://'+ current_site + enter_details_link
+        current_site = get_current_site(request).domain
+        absurl = current_site + enter_details_link
         subject = 'Account verification for ' + str(user.email)
         message = 'Hello, \n Thankyou for joining us, please follow the link to verify your account and complete your registration. \n' + absurl
         from_email = settings.EMAIL_HOST_USER
@@ -61,9 +61,10 @@ class LoginAPI(generics.GenericAPIView):
             return Response({'detail': 'Invalid Credentials or activate account'}, status=status.HTTP_404_NOT_FOUND)
         auth.login(request,user)
         user=User.objects.get(email=user_data['email'])
+        user_type=user.user_type
         token = Token.objects.get(user=user).key
         # token, _ = Token.objects.get_or_create(user = user)
-        response_data = {'email': user_data['email'],'token': token}
+        response_data = {'email': user_data['email'],'token': token,'user_type':user_type}
         return Response(response_data,status=status.HTTP_200_OK)
 
 
@@ -137,7 +138,7 @@ class RequestPasswordResetEmail(generics.GenericAPIView):
             token=Token.objects.get(user=user).key
             password_reset_link = reverse('password-reset-confirm', kwargs={'uidb64': uidb64, 'token': token})
 
-            current_site = get_current_site(request)
+            current_site = get_current_site(request).domain
             absurl = 'http://'+ current_site + password_reset_link
             subject = 'Password reset link for ' + str(user.email)
             message = 'Hello, \n Below is the link to reset your password \n' + absurl
