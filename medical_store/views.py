@@ -216,6 +216,17 @@ class PurchaseViewSets(ModelViewSet):
         serializer.is_valid(raise_exception=True)
         company = CompanyDetails.objects.get(company_name="Sun Pharma")
         purchase = serializer.save(account=request.user, company_name=company)
+        purchase_inventory = purchase.purchaseinventory.all()
+        for entry in purchase_inventory:
+            try:
+                med_inventory = MedicineInventory.objects.get(medicine_name=entry.medicine_name, batch_number=entry.batch_number)
+                med_inventory.medicine_quantity += entry.quantity
+                med_inventory.save()
+            except MedicineInventory.DoesNotExist as identifier:
+                med_inventory = MedicineInventory(medicine_name=entry.medicine_name, batch_number=entry.batch_number, company_name=company,
+                                                  mfd=entry.mfd, expiry=entry.expiry ,purchase_price=entry.price_of_each, sale_price=entry.mrp,
+                                                  medicine_quantity=entry.quantity, account=request.user)
+                med_inventory.save()
         serializer = PurchaseSerializers(instance = purchase)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     
