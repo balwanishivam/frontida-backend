@@ -68,17 +68,17 @@ class CompanyDetailsSerializers(ModelSerializer):
 class PurchaseInventorySerializers(ModelSerializer):
     class Meta:
         model = PurchaseInventory
-        fields = ['medicine_name', 'quantity', 'batch_number', 'price_of_each']
+        exclude = ['purchase']
 
 class PurchaseSerializers(ModelSerializer):
 
-    purchase_inventory = PurchaseInventorySerializers(many=True)
+    purchaseinventory = PurchaseInventorySerializers(many=True)
     class Meta:
         model = Purchase
-        fields = ['distributor_name', 'bill_number', 'bill_date', 'total_amount', 'discount', 'purchase_inventory']
+        fields = ['distributor_name', 'bill_number', 'bill_date', 'total_amount', 'discount', 'purchaseinventory']
     
     def create(self, validated_data):
-        purchase_inventory_validated = validated_data.pop('purchase_inventory')
+        purchase_inventory_validated = validated_data.pop('purchaseinventory')
         
         # all_companies = CompanyDetails.objects.all()
         # if company_name not in all_companies

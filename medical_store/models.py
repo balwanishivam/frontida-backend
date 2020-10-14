@@ -121,7 +121,10 @@ class PurchaseInventory(models.Model):
     quantity = models.IntegerField()
     batch_number = models.CharField(max_length=20)
     price_of_each= models.PositiveIntegerField()
-    purchase = models.ForeignKey('Purchase', on_delete=models.DO_NOTHING, related_name='purchase_inventory')
+    mrp = models.PositiveIntegerField()
+    mfd = models.DateField(null=False)
+    expiry = models.DateField(null=False)
+    purchase = models.ForeignKey(Purchase, on_delete=models.DO_NOTHING, related_name='purchaseinventory')
 
     def __str__(self):
         return self.batch_number
