@@ -26,6 +26,12 @@ class RegisterView(generics.GenericAPIView):
         user=request.data
         serializer=self.serializer_class(data=user)
         serializer.is_valid(raise_exception=True)
+        try:
+            # if serializer.validated_data.get('email') != User.objects.get()
+            User.objects.get(email=serializer.validated_data.get('email'))
+            return Response({'duplicate_user':'email already existing'}, status=status.HTTP_406_NOT_ACCEPTABLE)
+        except User.DoesNotExist as exp:
+            pass
         serializer.save()
         user_data=serializer.data
         user=User.objects.get(email=user_data['email'])
@@ -57,13 +63,24 @@ class LoginAPI(generics.GenericAPIView):
         serializer.is_valid(raise_exception=True)
         user_data=serializer.data
         user=auth.authenticate(email=user_data['email'],password=user_data['password'])
+        #print(user.is_verified)
         if not user:
-            return Response({'detail': 'Invalid Credentials or activate account'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'error': 'Invalid Credentials'}, status=status.HTTP_401_UNAUTHORIZED)
+        if not user.is_verified:
+            return Response({'error': 'User not verified'}, status=status.HTTP_400_BAD_REQUEST)
         auth.login(request,user)
         user=User.objects.get(email=user_data['email'])
+
         token = Token.objects.get(user=user).key
+        
+        try:
+            user_details = UserDetailsSerializers(instance = UserDetails.objects.get(account=user)) 
+        except UserDetails.DoesNotExist as exp:
+            return Response({'NoUserDetails':'User details not provided'}, status=status.HTTP_404_NOT_FOUND)
+
+            
         # token, _ = Token.objects.get_or_create(user = user)
-        response_data = {'email': user_data['email'],'token': token}
+        response_data = {'email': user_data['email'],'user_type':user.user_type,'token': token, 'user_details': user_details.data}
         return Response(response_data,status=status.HTTP_200_OK)
 
 

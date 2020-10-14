@@ -77,12 +77,8 @@ class SalesInventory(models.Model):
     #prescription = models.CharField(max_length=)
     batch_number = models.CharField(max_length=20)
     price_of_each= models.PositiveIntegerField()
-<<<<<<< HEAD
-    sales_id = models.ForeignKey('Sales', on_delete=models.DO_NOTHING)
-=======
     sales_id = models.ForeignKey(Sales, on_delete=models.DO_NOTHING, related_name='salesinventory')
 
->>>>>>> d4648402cfa088996b141fad983c794747a72ff3
 
 
 
