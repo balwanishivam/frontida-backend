@@ -78,7 +78,7 @@ class SalesInventory(models.Model):
     batch_number = models.CharField(max_length=20)
     price_of_each= models.PositiveIntegerField()
     sales_id = models.ForeignKey(Sales, on_delete=models.DO_NOTHING, related_name='salesinventory')
-    
+
 
 
 
