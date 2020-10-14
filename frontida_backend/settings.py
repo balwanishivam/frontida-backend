@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     # 'django_google_maps',
-    'medical_store',
+    # 'medical_store',
     'authentication',
     'corsheaders',
 ]
