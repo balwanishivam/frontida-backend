@@ -216,6 +216,17 @@ class PurchaseViewSets(ModelViewSet):
         serializer.is_valid(raise_exception=True)
         company = CompanyDetails.objects.get(company_name="Sun Pharma")
         purchase = serializer.save(account=request.user, company_name=company)
+        purchase_inventory = purchase.purchaseinventory.all()
+        for entry in purchase_inventory:
+            try:
+                med_inventory = MedicineInventory.objects.get(medicine_name=entry.medicine_name, batch_number=entry.batch_number)
+                med_inventory.medicine_quantity += entry.quantity
+                med_inventory.save()
+            except MedicineInventory.DoesNotExist as identifier:
+                med_inventory = MedicineInventory(medicine_name=entry.medicine_name, batch_number=entry.batch_number, company_name=company,
+                                                  mfd=entry.mfd, expiry=entry.expiry ,purchase_price=entry.price_of_each, sale_price=entry.mrp,
+                                                  medicine_quantity=entry.quantity, account=request.user)
+                med_inventory.save()
         serializer = PurchaseSerializers(instance = purchase)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     
@@ -225,4 +236,64 @@ class PurchaseViewSets(ModelViewSet):
             serializer = self.serializer_class(purchase)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Purchase.DoesNotExist as exp:
-            return Response(exp, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'doesNotExist':'does not exist in database'}, status=status.HTTP_404_NOT_FOUND)
+    
+class SalesViewSets(ModelViewSet):
+    queryset = Sales.objects.all()
+    serializer_class = SalesSerializers
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication]
+
+    def list(self, request):
+        if not request.user.is_authenticated:
+            return Response({'error': 'User not logged in'}, status=status.HTTP_401_UNAUTHORIZED)
+
+        sales = Sales.objects.filter(account=request.user)
+        if len(sales) == 0:
+            return Response({'empty': 'no records as of now'}, status=status.HTTP_200_OK)
+            
+        serializer = self.serializer_class(sales, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+            
+    def create(self, request):
+        if not request.user.is_authenticated:
+            return Response({'error': 'User not logged in'}, status=status.HTTP_401_UNAUTHORIZED)
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        for entry in serializer.validated_data.get('salesinventory'):
+            medicine_name = entry.get('medicine_name')
+            required_quantity = entry.get('quantity')
+            med_inventory = MedicineInventory.objects.filter(medicine_name=medicine_name).order_by('sale_price')
+            if len(med_inventory) == 0:
+                return Response({'medicine': 'not found'}, status=status.HTTP_400_BAD_REQUEST)
+            available_stock = 0
+            for medicine in med_inventory:
+                available_stock += medicine.medicine_quantity
+
+            if required_quantity > available_stock:
+                return Response({'medicine': 'not enough stock'}, status=status.HTTP_400_BAD_REQUEST)
+
+            for medicine in med_inventory:
+                if required_quantity <= medicine.medicine_quantity:
+                    medicine.medicine_quantity -= required_quantity
+                    medicine.save()
+                    break
+                else:
+                    required_quantity -= medicine.medicine_quantity
+                    medicine.delete()
+        
+        sales = serializer.save(account=request.user)
+        serializer = SalesSerializers(instance=sales)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def retrieve(self, request, pk=None):
+        try:
+            sales = Sales.objects.get(pk=pk)
+            serializer = self.serializer_class(sales)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Sales.DoesNotExist as exp:
+            return Response({'doesNotExist':'does not exist in database'}, status=status.HTTP_404_NOT_FOUND)
+                
+
+        
+        
