@@ -25,33 +25,27 @@ class RegisterView(generics.GenericAPIView):
     def post(self,request):
         user=request.data
         serializer=self.serializer_class(data=user)
-        serializer.is_valid(raise_exception=True)
+        if serializer.is_valid():
+            serializer.save()
+            user_data=serializer.data
+            user=User.objects.get(email=user_data['email'])
+            uidb64 = urlsafe_base64_encode(smart_bytes(user.id))
+            token = Token.objects.get(user=user).key
+            enter_details_link = reverse('user_details', kwargs={'uidb64': uidb64, 'token': token})
 
-        try:
-            # if serializer.validated_data.get('email') != User.objects.get()
-            User.objects.get(email=serializer.validated_data.get('email'))
-            return Response({'duplicate_user':'email already existing'}, status=status.HTTP_406_NOT_ACCEPTABLE)
-        except User.DoesNotExist as exp:
-            pass
-        serializer.save(is_verified=True)
-        
-        user_data=serializer.data
-        user=User.objects.get(email=user_data['email'])
-        uidb64 = urlsafe_base64_encode(smart_bytes(user.id))
-        token = Token.objects.get(user=user).key
-        enter_details_link = reverse('user_details', kwargs={'uidb64': uidb64, 'token': token})
-
-        current_site = get_current_site(request).domain
-        absurl = current_site + enter_details_link
-        subject = 'Account verification for ' + str(user.email)
-        message = 'Hello, \n Thankyou for joining us, please login to complete your details and registration process. \n' 
-        from_email = settings.EMAIL_HOST_USER
-        recipient_list = [user.email, ]
-
-        email = EmailMessage(subject, message, from_email, recipient_list,)
-        email.send()
-
-        return Response(user_data,status=status.HTTP_201_CREATED)
+            current_site = get_current_site(request).domain
+            absurl = current_site + enter_details_link
+            subject = 'Account verification for ' + str(user.email)
+            message = 'Hello, \n Thankyou for joining us, please login to complete your details and registration process. \n' 
+            from_email = settings.EMAIL_HOST_USER
+            recipient_list = [user.email, ]
+            email = EmailMessage(subject, message, from_email, recipient_list,)
+            email.send()
+            return Response(user_data,status=status.HTTP_201_CREATED)
+        else:
+            print(serializer.errors)
+            return Response({'Duplicate User':'User Email already used'},status=status.HTTP_400_BAD_REQUEST)
+       
 
 
 class LoginAPI(generics.GenericAPIView):
@@ -62,7 +56,7 @@ class LoginAPI(generics.GenericAPIView):
         return Response({'yup': 'Lets try this'}, status=status.HTTP_200_OK)
     def post(self,request):
         serializer =self.serializer_class(data=request.data)
-        serializer.is_valid(raise_exception=True)
+        serializer.is_valid(raise_exception=False)
         user_data=serializer.data
         user=auth.authenticate(email=user_data['email'],password=user_data['password'])
         #print(user.is_verified)
@@ -96,7 +90,6 @@ class LogoutView(generics.GenericAPIView):
             # print(token)
         except Exception as exp:
             raise AuthenticationFailed(exp, 401)
-
         logout(request)
         return Response({"success": "Successfully logged out."},
                         status=status.HTTP_200_OK)
@@ -139,7 +132,6 @@ class UserDetailsCreate(APIView):
 
 class RequestPasswordResetEmail(generics.GenericAPIView):
     serializer_class = PasswordResetEmailRequestSerializer
-
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -164,9 +156,7 @@ class RequestPasswordResetEmail(generics.GenericAPIView):
                 from_email,
                 recipient_list,
             )
-
             email.send()
-
             return Response({'success': 'Password reset link sent, check your inbox'}, status=status.HTTP_200_OK)         
         except Exception as exp:
             print('Here')
