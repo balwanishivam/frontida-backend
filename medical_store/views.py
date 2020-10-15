@@ -282,13 +282,14 @@ class SalesViewSets(ModelViewSet):
     def list(self, request):
         if not request.user.is_authenticated:
             return Response({'error': 'User not logged in'}, status=status.HTTP_401_UNAUTHORIZED)
-        try:
-            sales = Sales.objects.get(account=request.user)
-            serializer = self.serializer_class(sales, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except Sales.DoesNotExist as exp:
-            return Response({'empty': 'no records as of now'}, status=status.HTTP_200_OK)
 
+        sales = Sales.objects.filter(account=request.user)
+        if len(sales) == 0:
+            return Response({'empty': 'no records as of now'}, status=status.HTTP_200_OK)
+            
+        serializer = self.serializer_class(sales, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+            
     def create(self, request):
         if not request.user.is_authenticated:
             return Response({'error': 'User not logged in'}, status=status.HTTP_401_UNAUTHORIZED)
@@ -329,6 +330,9 @@ class SalesViewSets(ModelViewSet):
             return Response({'doesNotExist':'does not exist in database'}, status=status.HTTP_404_NOT_FOUND)
                 
 
+
+        
+        
     
 #     def retrieve(self, request, pk=None):
 #         try:
@@ -337,4 +341,3 @@ class SalesViewSets(ModelViewSet):
 #             return Response(serializer.data, status=status.HTTP_200_OK)
 #         except Purchase.DoesNotExist as exp:
 #             return Response(exp, status=status.HTTP_400_BAD_REQUEST)
-

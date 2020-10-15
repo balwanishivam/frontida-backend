@@ -26,13 +26,15 @@ class RegisterView(generics.GenericAPIView):
         user=request.data
         serializer=self.serializer_class(data=user)
         serializer.is_valid(raise_exception=True)
+
         try:
             # if serializer.validated_data.get('email') != User.objects.get()
             User.objects.get(email=serializer.validated_data.get('email'))
             return Response({'duplicate_user':'email already existing'}, status=status.HTTP_406_NOT_ACCEPTABLE)
         except User.DoesNotExist as exp:
             pass
-        serializer.save()
+        serializer.save(is_verified=True)
+        
         user_data=serializer.data
         user=User.objects.get(email=user_data['email'])
         uidb64 = urlsafe_base64_encode(smart_bytes(user.id))
@@ -42,7 +44,7 @@ class RegisterView(generics.GenericAPIView):
         current_site = get_current_site(request)
         absurl = 'http://'+ current_site + enter_details_link
         subject = 'Account verification for ' + str(user.email)
-        message = 'Hello, \n Thankyou for joining us, please follow the link to verify your account and complete your registration. \n' + absurl
+        message = 'Hello, \n Thankyou for joining us, please login to complete your details and registration process. \n' 
         from_email = settings.EMAIL_HOST_USER
         recipient_list = [user.email, ]
 
@@ -107,17 +109,17 @@ class UserDetailsCreate(APIView):
     authentication_classes = [TokenAuthentication]
     model=UserDetails
     serializer_class = UserDetailsSerializers
-    def get(self, request, uidb64, token):
-        try:
-            user_id = force_str(urlsafe_base64_decode(uidb64))
-            user = User.objects.get(id=user_id)
+    # def get(self, request, uidb64, token):
+    #     try:
+    #         user_id = force_str(urlsafe_base64_decode(uidb64))
+    #         user = User.objects.get(id=user_id)
 
-            if token != Token.objects.get(user=user).key:
-                raise AuthenticationFailed('Not a valid account verification link', 401)
-            else:
-                return Response({'success': 'Token authenticated'}, status=status.HTTP_200_OK)
-        except DjangoUnicodeDecodeError as identifier:
-            raise AuthenticationFailed('Not a valid reset link', 401)
+    #         if token != Token.objects.get(user=user).key:
+    #             raise AuthenticationFailed('Not a valid account verification link', 401)
+    #         else:
+    #             return Response({'success': 'Token authenticated'}, status=status.HTTP_200_OK)
+    #     except DjangoUnicodeDecodeError as identifier:
+    #         raise AuthenticationFailed('Not a valid reset link', 401)
 
 
     def post(self, request, uidb64, token):
@@ -125,10 +127,8 @@ class UserDetailsCreate(APIView):
         try:
             user_id = force_str(urlsafe_base64_decode(uidb64))
             user = User.objects.get(id=user_id)
-            print(user)
-            print('\n \n')
             if token != Token.objects.get(user=user).key:
-                raise AuthenticationFailed('Not a valid account verification link', 401)
+                raise AuthenticationFailed('User not authorized', 401)
             if serializer.is_valid():
                 if not user.is_verified:
                     user.is_verified=True
