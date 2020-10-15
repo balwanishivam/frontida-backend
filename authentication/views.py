@@ -54,11 +54,11 @@ class LoginAPI(generics.GenericAPIView):
         return Response({'yup': 'Lets try this'}, status=status.HTTP_200_OK)
     def post(self,request):
         serializer =self.serializer_class(data=request.data)
-        serializer.is_valid(raise_exception=True)
+        serializer.is_valid(raise_exception=False)
         user_data=serializer.data
         user=auth.authenticate(email=user_data['email'],password=user_data['password'])
-        if not user:
-            return Response({'detail': 'Invalid Credentials or activate account'}, status=status.HTTP_404_NOT_FOUND)
+        if not user or not user.is_verified:
+            return Response({'error': 'Invalid Credentials or activate account'}, status=status.HTTP_404_NOT_FOUND)
         auth.login(request,user)
         user=User.objects.get(email=user_data['email'])
         user_type=user.user_type
@@ -81,7 +81,6 @@ class LogoutView(generics.GenericAPIView):
             # print(token)
         except Exception as exp:
             raise AuthenticationFailed(exp, 401)
-
         logout(request)
         return Response({"success": "Successfully logged out."},
                         status=status.HTTP_200_OK)

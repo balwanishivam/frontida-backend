@@ -28,6 +28,8 @@ class RegisterSerializer(serializers.ModelSerializer):
         email=attrs.get('email','')
         user_type=attrs.get('user_type','')
         password=attrs.get('password','')
+        if User.objects.filter(email=email).exists():
+            return Response({"duplicate_account":"User with this email already exist.Try with a different email."},status=status.HTTP_400_BAD_REQUEST)
         return attrs
         
     def create(self,validate_data):
