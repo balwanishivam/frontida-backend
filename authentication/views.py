@@ -25,25 +25,27 @@ class RegisterView(generics.GenericAPIView):
     def post(self,request):
         user=request.data
         serializer=self.serializer_class(data=user)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        user_data=serializer.data
-        user=User.objects.get(email=user_data['email'])
-        uidb64 = urlsafe_base64_encode(smart_bytes(user.id))
-        token = Token.objects.get(user=user).key
-        enter_details_link = reverse('user_details', kwargs={'uidb64': uidb64, 'token': token})
+        if serializer.is_valid():
+            serializer.save()
+            user_data=serializer.data
+            user=User.objects.get(email=user_data['email'])
+            uidb64 = urlsafe_base64_encode(smart_bytes(user.id))
+            token = Token.objects.get(user=user).key
+            enter_details_link = reverse('user_details', kwargs={'uidb64': uidb64, 'token': token})
 
-        current_site = get_current_site(request).domain
-        absurl = current_site + enter_details_link
-        subject = 'Account verification for ' + str(user.email)
-        message = 'Hello, \n Thankyou for joining us, please follow the link to verify your account and complete your registration. \n' + absurl
-        from_email = settings.EMAIL_HOST_USER
-        recipient_list = [user.email, ]
-
-        email = EmailMessage(subject, message, from_email, recipient_list,)
-        email.send()
-
-        return Response(user_data,status=status.HTTP_201_CREATED)
+            current_site = get_current_site(request).domain
+            absurl = current_site + enter_details_link
+            subject = 'Account verification for ' + str(user.email)
+            message = 'Hello, \n Thankyou for joining us, please login to complete your details and registration process. \n' 
+            from_email = settings.EMAIL_HOST_USER
+            recipient_list = [user.email, ]
+            email = EmailMessage(subject, message, from_email, recipient_list,)
+            email.send()
+            return Response(user_data,status=status.HTTP_201_CREATED)
+        else:
+            print(serializer.errors)
+            return Response({'Duplicate User':'User Email already used'},status=status.HTTP_400_BAD_REQUEST)
+       
 
 
 class LoginAPI(generics.GenericAPIView):
@@ -57,14 +59,21 @@ class LoginAPI(generics.GenericAPIView):
         serializer.is_valid(raise_exception=False)
         user_data=serializer.data
         user=auth.authenticate(email=user_data['email'],password=user_data['password'])
-        if not user or not user.is_verified:
-            return Response({'error': 'Invalid Credentials or activate account'}, status=status.HTTP_404_NOT_FOUND)
+        #print(user.is_verified)
+        if not user:
+            return Response({'error': 'Invalid Credentials'}, status=status.HTTP_401_UNAUTHORIZED)
+        if not user.is_verified:
+            return Response({'error': 'User not verified'}, status=status.HTTP_400_BAD_REQUEST)
         auth.login(request,user)
         user=User.objects.get(email=user_data['email'])
         user_type=user.user_type
         token = Token.objects.get(user=user).key
-        # token, _ = Token.objects.get_or_create(user = user)
-        response_data = {'email': user_data['email'],'token': token,'user_type':user_type}
+        try:
+            user_details = UserDetailsSerializers(instance = UserDetails.objects.get(account=user)) 
+        except UserDetails.DoesNotExist as exp:
+            return Response({'NoUserDetails':'User details not provided'}, status=status.HTTP_404_NOT_FOUND)
+        response_data = {'email': user_data['email'],'user_type':user.user_type,'token': token, 'user_details': user_details.data}
+
         return Response(response_data,status=status.HTTP_200_OK)
 
 
@@ -90,17 +99,17 @@ class UserDetailsCreate(APIView):
     authentication_classes = [TokenAuthentication]
     model=UserDetails
     serializer_class = UserDetailsSerializers
-    def get(self, request, uidb64, token):
-        try:
-            user_id = force_str(urlsafe_base64_decode(uidb64))
-            user = User.objects.get(id=user_id)
+    # def get(self, request, uidb64, token):
+    #     try:
+    #         user_id = force_str(urlsafe_base64_decode(uidb64))
+    #         user = User.objects.get(id=user_id)
 
-            if token != Token.objects.get(user=user).key:
-                raise AuthenticationFailed('Not a valid account verification link', 401)
-            else:
-                return Response({'success': 'Token authenticated'}, status=status.HTTP_200_OK)
-        except DjangoUnicodeDecodeError as identifier:
-            raise AuthenticationFailed('Not a valid reset link', 401)
+    #         if token != Token.objects.get(user=user).key:
+    #             raise AuthenticationFailed('Not a valid account verification link', 401)
+    #         else:
+    #             return Response({'success': 'Token authenticated'}, status=status.HTTP_200_OK)
+    #     except DjangoUnicodeDecodeError as identifier:
+    #         raise AuthenticationFailed('Not a valid reset link', 401)
 
 
     def post(self, request, uidb64, token):
@@ -108,10 +117,8 @@ class UserDetailsCreate(APIView):
         try:
             user_id = force_str(urlsafe_base64_decode(uidb64))
             user = User.objects.get(id=user_id)
-            print(user)
-            print('\n \n')
             if token != Token.objects.get(user=user).key:
-                raise AuthenticationFailed('Not a valid account verification link', 401)
+                raise AuthenticationFailed('User not authorized', 401)
             if serializer.is_valid():
                 if not user.is_verified:
                     user.is_verified=True
@@ -125,7 +132,6 @@ class UserDetailsCreate(APIView):
 
 class RequestPasswordResetEmail(generics.GenericAPIView):
     serializer_class = PasswordResetEmailRequestSerializer
-
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -150,9 +156,7 @@ class RequestPasswordResetEmail(generics.GenericAPIView):
                 from_email,
                 recipient_list,
             )
-
             email.send()
-
             return Response({'success': 'Password reset link sent, check your inbox'}, status=status.HTTP_200_OK)         
         except Exception as exp:
             print('Here')
