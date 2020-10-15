@@ -44,7 +44,7 @@ class RegisterView(generics.GenericAPIView):
             return Response(user_data,status=status.HTTP_201_CREATED)
         else:
             print(serializer.errors)
-            return Response({'Duplicate User':'User Email already used'},status=status.HTTP_400_BAD_REQUEST)
+            return Response({'Duplicate User':'User Email already used'},status=status.HTTP_409_CONFLICT)
        
 
 
