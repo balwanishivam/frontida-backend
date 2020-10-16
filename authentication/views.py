@@ -26,7 +26,7 @@ class RegisterView(generics.GenericAPIView):
         user=request.data
         serializer=self.serializer_class(data=user)
         if serializer.is_valid():
-            serializer.save(is_verfiled=True)
+            serializer.save()
             user_data=serializer.data
             user=User.objects.get(email=user_data['email'])
             uidb64 = urlsafe_base64_encode(smart_bytes(user.id))
