@@ -109,18 +109,18 @@ class CompanyDetailsViewSets(ModelViewSet):
 # #         else:
 # #             return Response({'error': 'permission denied'}, status=status.HTTP_401_UNAUTHORIZED)
 
-# class MedicineInventoryViewSets(viewsets.ViewSet):
-#     queryset = MedicineInventory.objects.all()
-#     serializer_class = MedicineInventorySerializers
-#     authentication_classes = [TokenAuthentication]
-#     permission_classes = [IsAuthenticated]
+class MedicineInventoryViewSets(viewsets.ViewSet):
+    queryset = MedicineInventory.objects.all()
+    serializer_class = MedicineInventorySerializers
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
 
-#     def list(self, request):
-#         queryset = CompanyDetails.objects.all()
-#         serializer = CompanyDetailsSerializers(queryset, many=True)
-#         user_data=serializer.data
-#         company_name=user_data['company_name']
-#         return Response({'company_name':company_name},status=status.HTTP_200_OK)
+    def list(self, request):
+        queryset = CompanyDetails.objects.all()
+        serializer = CompanyDetailsSerializers(queryset, many=True)
+        user_data=serializer.data
+        company_name=user_data['company_name']
+        return Response({'company_name':company_name},status=status.HTTP_200_OK)
 
     
 #     def create(self, request):
