@@ -43,8 +43,11 @@ class RegisterView(generics.GenericAPIView):
             email.send()
             return Response(user_data,status=status.HTTP_201_CREATED)
         else:
-            print(serializer.errors)
-            return Response({'Duplicate User':'User Email already used'},status=status.HTTP_200_OK)
+            if User.objects.filter(email=serializer.data['email']).exists():
+                print(serializer.errors)
+                return Response({'Duplicate User':'User Email already used'},status=status.HTTP_200_OK)
+            else:
+                return Response({'Empty Fields':'Fields can not be empty'},status=status.HTTP_200_OK)
        
 
 
@@ -71,7 +74,7 @@ class LoginAPI(generics.GenericAPIView):
         try:
             user_details = UserDetailsSerializers(instance = UserDetails.objects.get(account=user)) 
         except UserDetails.DoesNotExist as exp:
-            return Response({'NoUserDetails':'User details not provided'}, status=status.HTTP_200_OK)
+            return Response({'NoUserDetails':'User details not provided','token':token}, status=status.HTTP_200_OK)
         response_data = {'email': user_data['email'],'user_type':user.user_type,'token': token, 'user_details': user_details.data}
 
         return Response(response_data,status=status.HTTP_200_OK)
