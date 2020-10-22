@@ -17,7 +17,7 @@ urlpatterns = [
 ]
 
 router = SimpleRouter()
-router.register("medicine-inventory", views.MedicineInventoryViewSets, basename="api-medical-inventory")
+ 
 router.register("company_details", views.CompanyDetailsViewSets, basename="api-company-details")
 router.register("purchase", views.PurchaseViewSets, basename="api-purchase")
 #router.register("purchase-inventory", views.PurchaseInventoryViewSets, basename="api-purchase-inventory")
