@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     # 'django_google_maps',
-    # 'medical_store',
+    'medical_store',
     'authentication',
     'corsheaders',
 ]
@@ -121,7 +121,14 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
-
+CORS_ORIGIN_ALLOW_ALL = True # If this is used then `CORS_ORIGIN_WHITELIST` will not have any effect
+CORS_ALLOW_CREDENTIALS = True
+# CORS_ORIGIN_WHITELIST = [
+#     'http://localhost:3030',
+# ] # If this is used, then not need to use `CORS_ORIGIN_ALLOW_ALL = True`
+# CORS_ORIGIN_REGEX_WHITELIST = [
+#     'http://localhost:3030',
+# ]
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
