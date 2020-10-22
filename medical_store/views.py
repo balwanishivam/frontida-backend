@@ -8,6 +8,7 @@ from rest_framework.decorators import permission_classes
 from rest_framework import viewsets
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import action
+import datetime
 
 class CompanyDetailsViewSets(ModelViewSet):
     serializer_class = CompanyDetailsSerializers
@@ -247,8 +248,13 @@ class PurchaseViewSets(ModelViewSet):
     def create(self, request):
         if not request.user.is_authenticated:
             return Response({'error': 'User not logged  in'}, status=status.HTTP_401_UNAUTHORIZED)
+
         serializer = self.serializer_class(data=request.data)
-        serializer.is_valid(raise_exception=True)
+
+        if not serializer.is_valid():
+            print(list(serializer.errors.keys())[0])
+            return Response({'Empty Fields':f'{list(serializer.errors.keys())[0]} not provided'},status=status.HTTP_200_OK)
+
         company = CompanyDetails.objects.get(company_name="Sun Pharma")
         purchase = serializer.save(account=request.user, company_name=company)
         purchase_inventory = purchase.purchaseinventory.all()
@@ -294,16 +300,24 @@ class SalesViewSets(ModelViewSet):
         if not request.user.is_authenticated:
             return Response({'error': 'User not logged in'}, status=status.HTTP_401_UNAUTHORIZED)
         serializer = self.serializer_class(data=request.data)
-        serializer.is_valid(raise_exception=True)
+        if not serializer.is_valid():
+            print(list(serializer.errors.keys())[0])
+            return Response({'Empty Fields':f'{list(serializer.errors.keys())[0]} not provided'},status=status.HTTP_200_OK)         
+
         for entry in serializer.validated_data.get('salesinventory'):
             medicine_name = entry.get('medicine_name')
             required_quantity = entry.get('quantity')
-            med_inventory = MedicineInventory.objects.filter(medicine_name=medicine_name).order_by('sale_price')
+            med_inventory = list(MedicineInventory.objects.filter(medicine_name=medicine_name).order_by('sale_price'))
             if len(med_inventory) == 0:
                 return Response({'medicine': 'not found'}, status=status.HTTP_400_BAD_REQUEST)
             available_stock = 0
             for medicine in med_inventory:
-                available_stock += medicine.medicine_quantity
+                if (medicine.expiry - datetime.date.today()) < datetime.timedelta(days=90):
+                    medicine.isexpired = True
+                    med_inventory.remove(medicine)
+                    medicine.save()
+                else:
+                    available_stock += medicine.medicine_quantity
 
             if required_quantity > available_stock:
                 return Response({'medicine': 'not enough stock'}, status=status.HTTP_400_BAD_REQUEST)
