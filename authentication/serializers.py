@@ -15,7 +15,7 @@ USER_TYPE=[
     ('AMBULANCE','AMBULANCE')
 ]
 class RegisterSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(
+    password = serializers.CharField(max_length=68,min_length=8,
         write_only=True,
         required=True,
         style={'input_type': 'password', 'placeholder': 'Password'}
@@ -28,7 +28,18 @@ class RegisterSerializer(serializers.ModelSerializer):
         email=attrs.get('email','')
         user_type=attrs.get('user_type','')
         password=attrs.get('password','')
-        return attrs
+        response = {
+                    "message": "User Email already exists",
+                    "success": "false",
+                    "error": 1
+                }
+        try:
+            Customer.objects.get(email=attrs["email"])
+            raise serializers.ValidationError(response["message"])
+            #or you could return a json response.
+            #return Response(response)
+        except:
+            return attrs
         
     def create(self,validate_data):
         return User.objects.create_user(**validate_data)
