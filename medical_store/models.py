@@ -34,7 +34,7 @@ class CompanyDetails(models.Model):
 
 class Purchase(models.Model):
     distributor_name = models.CharField(max_length=50)
-    company_name = models.ForeignKey('CompanyDetails',on_delete=models.DO_NOTHING)
+    company_name = models.CharField(max_length=200)
     bill_number= models.CharField(max_length=10)
     bill_date= models.DateField(null=True)
     total_amount= models.DecimalField(decimal_places=2, max_digits=10)

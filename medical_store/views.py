@@ -261,7 +261,9 @@ class PurchaseViewSets(ModelViewSet):
             return Response({'error': 'User not logged  in'}, status=status.HTTP_401_UNAUTHORIZED)
         purchases = Purchase.objects.filter(account = request.user)
         serializer = self.serializer_class(purchases, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        responsedata = {'previousbills': serializer.data, 
+                        'companynames': CompanyDetails.objects.all().company_name}
+        return Response(responsedata, status=status.HTTP_200_OK)
 
     def create(self, request):
         if not request.user.is_authenticated:
@@ -274,8 +276,10 @@ class PurchaseViewSets(ModelViewSet):
             error_keys = list(serializer.errors.keys())
             if len(error_keys) > 0 and len(error_values) > 0:
                 return Response({f'{error_keys[0]}': f'{error_values[0][0]}'})
-
-        company = CompanyDetails.objects.get(company_name="Sun Pharma")
+        try:
+            company = CompanyDetails.objects.get(company_name=serializer.validated_data.get('company_name'))
+        except CompanyDetails.DoesNotExist as exp:
+            return Response({'error': 'Invalid company name'}, status=status.HTTP_200_OK)
         purchase = serializer.save(account=request.user, company_name=company)
         purchase_inventory = purchase.purchaseinventory.all()
         for entry in purchase_inventory:
@@ -289,6 +293,7 @@ class PurchaseViewSets(ModelViewSet):
                                                   medicine_quantity=entry.quantity, account=request.user)
                 med_inventory.save()
         serializer = PurchaseSerializers(instance = purchase)
+        
         return Response(serializer.data, status=status.HTTP_201_CREATED)
       
     def retrieve(self, request, pk=None):
