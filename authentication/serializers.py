@@ -28,18 +28,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         email=attrs.get('email','')
         user_type=attrs.get('user_type','')
         password=attrs.get('password','')
-        response = {
-                    "message": "User Email already exists",
-                    "success": "false",
-                    "error": 1
-                }
-        try:
-            Customer.objects.get(email=attrs["email"])
-            raise serializers.ValidationError(response["message"])
-            #or you could return a json response.
-            #return Response(response)
-        except:
-            return attrs
+        return attrs
         
     def create(self,validate_data):
         return User.objects.create_user(**validate_data)
