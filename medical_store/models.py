@@ -17,6 +17,7 @@ class MedicineInventory(models.Model):
     sale_price = models.PositiveIntegerField()
     medicine_quantity = models.PositiveIntegerField()
     account = models.ForeignKey(User ,on_delete=models.CASCADE)
+    isexpired = models.BooleanField(default=False)
 
 
 
@@ -33,7 +34,7 @@ class CompanyDetails(models.Model):
 
 class Purchase(models.Model):
     distributor_name = models.CharField(max_length=50)
-    company_name = models.ForeignKey('CompanyDetails',on_delete=models.DO_NOTHING)
+    company_name = models.CharField(max_length=200)
     bill_number= models.CharField(max_length=10)
     bill_date= models.DateField(null=True)
     total_amount= models.DecimalField(decimal_places=2, max_digits=10)
@@ -53,6 +54,7 @@ class PurchaseInventory(models.Model):
     mfd = models.DateField(null=False)
     expiry = models.DateField(null=False)
     purchase = models.ForeignKey(Purchase, on_delete=models.DO_NOTHING, related_name='purchaseinventory')
+    isexpired = models.BooleanField(default=False)
 
     def __str__(self):
         return self.batch_number
@@ -78,7 +80,7 @@ class SalesInventory(models.Model):
     batch_number = models.CharField(max_length=20)
     price_of_each= models.PositiveIntegerField()
     sales_id = models.ForeignKey(Sales, on_delete=models.DO_NOTHING, related_name='salesinventory')
-
+    isexpired = models.BooleanField(default=False)
 
 
 

@@ -5,7 +5,7 @@ from .models import *
 class MedicineInventorySerializers(ModelSerializer):
     class Meta:
         model=MedicineInventory
-        fields = ['batch_number', 'medicine_name', 'mfd', 'expiry', 'purchase_price', 'sale_price', 'medicine_quantity', 'company_name']
+        # fields = ['batch_number', 'medicine_name', 'mfd', 'expiry', 'purchase_price', 'sale_price', 'medicine_quantity', 'company_name']
         exclude=['account', 'HSNcode']
 
 
@@ -17,14 +17,14 @@ class CompanyDetailsSerializers(ModelSerializer):
 class PurchaseInventorySerializers(ModelSerializer):
     class Meta:
         model = PurchaseInventory
-        exclude = ['purchase']
+        exclude = ['purchase', 'isexpired']
 
 class PurchaseSerializers(ModelSerializer):
 
     purchaseinventory = PurchaseInventorySerializers(many=True)
     class Meta:
         model = Purchase
-        fields = ['distributor_name', 'bill_number', 'bill_date', 'total_amount', 'discount', 'purchaseinventory']
+        fields = ['distributor_name', 'bill_number', 'bill_date', 'total_amount', 'discount', 'company_name', 'purchaseinventory']
     
     def create(self, validated_data):
         purchase_inventory_validated = validated_data.pop('purchaseinventory')
@@ -40,7 +40,7 @@ class PurchaseSerializers(ModelSerializer):
 class SalesInventorySerializers(ModelSerializer):
     class Meta:
         model = SalesInventory
-        exclude = ['sales_id'] 
+        exclude = ['sales_id', 'isexpired'] 
 
 class SalesSerializers(ModelSerializer):
     salesinventory = SalesInventorySerializers(many=True)
