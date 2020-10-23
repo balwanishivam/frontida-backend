@@ -15,7 +15,7 @@ USER_TYPE=[
     ('AMBULANCE','AMBULANCE')
 ]
 class RegisterSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(
+    password = serializers.CharField(max_length=68,min_length=8,
         write_only=True,
         required=True,
         style={'input_type': 'password', 'placeholder': 'Password'}

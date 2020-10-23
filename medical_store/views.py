@@ -260,9 +260,10 @@ class PurchaseViewSets(ModelViewSet):
         if not request.user.is_authenticated:
             return Response({'error': 'User not logged  in'}, status=status.HTTP_401_UNAUTHORIZED)
         purchases = Purchase.objects.filter(account = request.user)
+        company_name=[company.company_name for company in CompanyDetails.objects.all() ]
         serializer = self.serializer_class(purchases, many=True)
         responsedata = {'previousbills': serializer.data, 
-                        'companynames': CompanyDetails.objects.all().company_name}
+                        'companynames': company_name}
         return Response(responsedata, status=status.HTTP_200_OK)
 
     def create(self, request):
