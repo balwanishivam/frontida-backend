@@ -25,29 +25,38 @@ class RegisterView(generics.GenericAPIView):
     def post(self,request):
         user=request.data
         serializer=self.serializer_class(data=user)
-        if serializer.is_valid():
-            serializer.save()
-            user_data=serializer.data
-            user=User.objects.get(email=user_data['email'])
-            uidb64 = urlsafe_base64_encode(smart_bytes(user.id))
-            token = Token.objects.get(user=user).key
-            enter_details_link = reverse('user_details', kwargs={'uidb64': uidb64, 'token': token})
-
-            current_site = get_current_site(request).domain
-            absurl = current_site + enter_details_link
-            subject = 'Account verification for ' + str(user.email)
-            message = 'Hello, \n Thankyou for joining us, please login to complete your details and registration process. \n' 
-            from_email = settings.EMAIL_HOST_USER
-            recipient_list = [user.email, ]
-            email = EmailMessage(subject, message, from_email, recipient_list,)
-            email.send()
-            return Response(user_data,status=status.HTTP_201_CREATED)
-        else:
-            if User.objects.filter(email=serializer.data['email']).exists():
-                print(serializer.errors)
-                return Response({'Duplicate User':'User Email already used'},status=status.HTTP_200_OK)
-            else:
-                return Response({'Empty Fields':'Fields can not be empty'},status=status.HTTP_200_OK)
+        
+        if not serializer.is_valid():
+            error_values = list(serializer.errors.values())
+            error_keys = list(serializer.errors.keys())
+            if len(error_keys) > 0 and len(error_values) > 0:
+                return Response({f'{error_keys[0]}': f'{error_values[0][0]}'})
+        
+        serializer.save()
+        user_data=serializer.data
+        user=User.objects.get(email=user_data['email'])
+        uidb64 = urlsafe_base64_encode(smart_bytes(user.id))
+        token = Token.objects.get(user=user).key
+        enter_details_link = reverse('user_details', kwargs={'uidb64': uidb64, 'token': token})
+        current_site = get_current_site(request).domain
+        absurl = current_site + enter_details_link
+        subject = 'Account verification for ' + str(user.email)
+        message = 'Hello, \n Thankyou for joining us, please login to complete your details and registration process. \n' 
+        from_email = settings.EMAIL_HOST_USER
+        recipient_list = [user.email, ]
+        email = EmailMessage(subject, message, from_email, recipient_list,)
+        email.send()
+        return Response(user_data,status=status.HTTP_201_CREATED)
+        # else:
+        #     error_values = list(serializer.errors.values())
+        #     error_keys = list(serializer.errors.keys())
+        #     if len(error_keys) > 0 and len(error_values) > 0:
+        #         return Response({f'{error_keys[0]}': f'{error_values[0][0]}'})
+        #     if User.objects.filter(email=serializer.data['email']).exists():
+        #         print(serializer.errors)
+        #         return Response({'Duplicate User':'User Email already used'},status=status.HTTP_200_OK)
+        #     else:
+        #         return Response({'Empty Fields':'Fields can not be empty'},status=status.HTTP_200_OK)
        
 
 
@@ -59,7 +68,13 @@ class LoginAPI(generics.GenericAPIView):
         return Response({'yup': 'Lets try this'}, status=status.HTTP_200_OK)
     def post(self,request):
         serializer =self.serializer_class(data=request.data)
-        serializer.is_valid(raise_exception=False)
+        
+        if not serializer.is_valid():
+            error_values = list(serializer.errors.values())
+            error_keys = list(serializer.errors.keys())
+            if len(error_keys) > 0 and len(error_values) > 0:
+                return Response({f'{error_keys[0]}': f'{error_values[0][0]}'})
+        
         user_data=serializer.data
         user=auth.authenticate(email=user_data['email'],password=user_data['password'])
         #print(user.is_verified)
@@ -78,7 +93,12 @@ class LoginAPI(generics.GenericAPIView):
         response_data = {'email': user_data['email'],'user_type':user.user_type,'token': token, 'user_details': user_details.data}
 
         return Response(response_data,status=status.HTTP_200_OK)
-
+        
+            # if User.objects.filter(email=serializer.data['email']).exists():
+            #     print(serializer.errors)
+            #     return Response({'Duplicate User':'User Email already used'},status=status.HTTP_200_OK)
+            # else:
+            #     return Response({'Empty Fields':'Fields can not be empty'},status=status.HTTP_200_OK)
 
 class LogoutView(generics.GenericAPIView):
     authentication_classes = [TokenAuthentication]
@@ -122,14 +142,25 @@ class UserDetailsCreate(APIView):
             user = User.objects.get(id=user_id)
             if token != Token.objects.get(user=user).key:
                 raise AuthenticationFailed('User not authorized', 200)
-            if serializer.is_valid():
-                if not user.is_verified:
-                    user.is_verified=True
-                    user.save()
-                serializer.save(account=user)
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
-            else:
-                return Response(serializer.errors, status=status.HTTP_200_OK)
+            
+            if not serializer.is_valid():    
+                error_values = list(serializer.errors.values())
+                error_keys = list(serializer.errors.keys())
+                if len(error_keys) > 0 and len(error_values) > 0:
+                    return Response({f'{error_keys[0]}': f'{error_values[0][0]}'})
+            
+            if not user.is_verified:
+                user.is_verified=True
+                user.save()
+            serializer.save(account=user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            
+                # if User.objects.filter(email=serializer.data['email']).exists():
+                #     print(serializer.errors)
+                #     return Response({'Duplicate User':'User Email already used'},status=status.HTTP_200_OK)
+                # else:
+                #     return Response({'Empty Fields':'Fields can not be empty'},status=status.HTTP_200_OK)
+                
         except DjangoUnicodeDecodeError as identifier:
             raise AuthenticationFailed(identifier, 200)
 
@@ -137,7 +168,13 @@ class RequestPasswordResetEmail(generics.GenericAPIView):
     serializer_class = PasswordResetEmailRequestSerializer
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
-        serializer.is_valid(raise_exception=True)
+        
+        if not serializer.is_valid():
+            error_values = list(serializer.errors.values())
+            error_keys = list(serializer.errors.keys())
+            if len(error_keys) > 0 and len(error_values) > 0:
+                return Response({f'{error_keys[0]}': f'{error_values[0][0]}'})
+
         email = serializer.data['email']
 
         try:
@@ -164,6 +201,7 @@ class RequestPasswordResetEmail(generics.GenericAPIView):
         except Exception as exp:
             print('Here')
             return Response(status=status.HTTP_200_OK)
+        
 
 class PasswordResetConfirm(generics.GenericAPIView):
     serializer_class = SetNewPasswordSerializer
@@ -187,7 +225,13 @@ class PasswordResetConfirm(generics.GenericAPIView):
                 raise AuthenticationFailed('Not a valid reset link', 200)
             else:
                 serializer = self.serializer_class(data=request.data)
-                serializer.is_valid(raise_exception=True)
+                
+                if not serializer.is_valid():
+                    error_values = list(serializer.errors.values())
+                    error_keys = list(serializer.errors.keys())
+                    if len(error_keys) > 0 and len(error_values) > 0:
+                        return Response({f'{error_keys[0]}': f'{error_values[0][0]}'})
+
                 password1 = serializer.data['password1']
                 user.set_password(password1)
                 user.save()
