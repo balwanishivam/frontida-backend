@@ -62,7 +62,7 @@ class PurchaseInventory(models.Model):
 class Sales(models.Model):
     bill_number= models.CharField(max_length=10)
     customer_name = models.CharField(max_length=50)
-    customer_contact = models.PositiveIntegerField(validators=[MaxValueValidator(9999999999),MinValueValidator(1000000000)])
+    customer_contact = models.BigIntegerField()
     referred_by = models.CharField(max_length=50)
     bill_date= models.DateField()
     total_amount= models.DecimalField(decimal_places=2, max_digits=10)

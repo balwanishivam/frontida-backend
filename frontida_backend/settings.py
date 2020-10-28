@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'medical_store',
     'authentication',
     'corsheaders',
+    'Users'
 ]
 
 MIDDLEWARE = [

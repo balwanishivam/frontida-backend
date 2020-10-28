@@ -38,7 +38,6 @@ class RegisterView(generics.GenericAPIView):
         uidb64 = urlsafe_base64_encode(smart_bytes(user.id))
         token = Token.objects.get(user=user).key
         enter_details_link = reverse('user_details', kwargs={'uidb64': uidb64, 'token': token})
-
         current_site = get_current_site(request).domain
         absurl = current_site + enter_details_link
         subject = 'Account verification for ' + str(user.email)
