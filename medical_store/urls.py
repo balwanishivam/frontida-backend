@@ -13,6 +13,7 @@ app_name="medical_store"
 
 # urlpatterns = router.urls
 urlpatterns = [
+    path('count/', views.CountAPI.as_view(), name='count-API'),
     
 ]
 
@@ -24,4 +25,4 @@ router.register("purchase", views.PurchaseViewSets, basename="api-purchase")
 router.register("sales", views.SalesViewSets, basename="api-sales")
 #router.register("sales-inventory", views.SalesInventoryViewSets, basename="api-sales-inventory")
 
-urlpatterns = router.urls
+urlpatterns = urlpatterns + router.urls

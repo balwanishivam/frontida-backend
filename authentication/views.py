@@ -25,15 +25,6 @@ class RegisterView(generics.GenericAPIView):
     def post(self,request):
         user=request.data
         serializer=self.serializer_class(data=user)
-<<<<<<< HEAD
-        # serializer.is_valid(raise_exception=True)
-        try:
-            # if serializer.validated_data.get('email') != User.objects.get()
-            User.objects.get(email=serializer.validated_data.get('email'))
-            return Response({'duplicate_user':'email already existing'}, status=status.HTTP_406_NOT_ACCEPTABLE)
-        except User.DoesNotExist as exp:
-            pass
-=======
         
         if not serializer.is_valid():
             error_values = list(serializer.errors.values())
@@ -41,7 +32,6 @@ class RegisterView(generics.GenericAPIView):
             if len(error_keys) > 0 and len(error_values) > 0:
                 return Response({f'{error_keys[0]}': f'{error_values[0][0]}'})
         
->>>>>>> d7860beb82dbbfb46dd18365c74947d063fa7f5a
         serializer.save()
         user_data=serializer.data
         user=User.objects.get(email=user_data['email'])
