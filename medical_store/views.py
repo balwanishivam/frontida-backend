@@ -398,9 +398,9 @@ class CountAPI(APIView):
         if not request.user.is_authenticated:
             return Response({'Authentication failed': 'User not authenticated'}, status=status.HTTP_200_OK)
 
-        medicine_names=[medicine.medicine_name for medicine in MedicineInventory.objects.filter(user=request.user)]
-        sales_names=[sales.id for sales in Sales.objects.filter(user=request.user)]
-        purchase_names=[purchase.id for purchase in Purchase.objects.filter(user=request.user)]
+        medicine_names=[medicine.medicine_name for medicine in MedicineInventory.objects.filter(account=request.user)]
+        sales_names=[sales.id for sales in Sales.objects.filter(account=request.user)]
+        purchase_names=[purchase.id for purchase in Purchase.objects.filter(account=request.user)]
 
 
         medicine_count = len(Counter(medicine_names).keys())
