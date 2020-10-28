@@ -1,6 +1,6 @@
 import json 
 from django.contrib import admin
-# from .models import *
+from .models import *
 
 admin.site.register(CompanyDetails)
 admin.site.register(Purchase)

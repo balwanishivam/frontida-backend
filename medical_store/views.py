@@ -8,6 +8,7 @@ from rest_framework.decorators import permission_classes
 from rest_framework import viewsets
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import action
+import datetime
 
 class CompanyDetailsViewSets(ModelViewSet):
     serializer_class = CompanyDetailsSerializers
@@ -36,7 +37,13 @@ class CompanyDetailsViewSets(ModelViewSet):
             return Response({'error': 'User not logged  in'}, status=status.HTTP_401_UNAUTHORIZED)
         if request.user.is_superuser:
             serializer = self.serializer_class(data=request.data)
-            serializer.is_valid(raise_exception=True)
+
+            if not serializer.is_valid():
+                error_values = list(serializer.errors.values())
+                error_keys = list(serializer.errors.keys())
+                if len(error_keys) > 0 and len(error_values) > 0:
+                    return Response({f'{error_keys[0]}': f'{error_values[0][0]}'})
+
             serializer.save()
             return Response({'Comanay Details': serializer.data}, status=status.HTTP_200_OK)
             
@@ -45,7 +52,7 @@ class CompanyDetailsViewSets(ModelViewSet):
             return Response({'error': 'User not logged  in'}, status=status.HTTP_401_UNAUTHORIZED)
         try:
             company = CompanyDetails.objects.get(pk=pk)
-        except:
+        except ComapnyDetails.DoesNotExist as exp:
             return Response({'error': 'Company with given pk not found'}, status=status.HTTP_404_NOT_FOUND)
         serializer = self.serializer_class(company)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -56,7 +63,13 @@ class CompanyDetailsViewSets(ModelViewSet):
         if request.user.is_superuser:
             instance = self.get_object()
             serializer = self.serializer_class(data=request.data)
-            serializer.is_valid(raise_exception=True)
+            
+            if not serializer.is_valid():
+                error_values = list(serializer.errors.values())
+                error_keys = list(serializer.errors.keys())
+                if len(error_keys) > 0 and len(error_values) > 0:
+                    return Response({f'{error_keys[0]}': f'{error_values[0][0]}'})
+
             instance.company_name = serializer.data['company_name']
             instance.company_contact = serializer.data['company_contact'] 
             instance.company_address = serializer.data['company_address']
@@ -73,7 +86,13 @@ class CompanyDetailsViewSets(ModelViewSet):
         if request.user.is_superuser:
             instance = self.get_object()
             serializer = self.serializer_class(data=request.data)
-            serializer.is_valid(raise_exception=True)
+            
+            if not serializer.is_valid():
+                error_values = list(serializer.errors.values())
+                error_keys = list(serializer.errors.keys())
+                if len(error_keys) > 0 and len(error_values) > 0:
+                    return Response({f'{error_keys[0]}': f'{error_values[0][0]}'})
+            
             instance.company_name = serializer.data['company_name']
             instance.company_contact = serializer.data['company_contact'] 
             instance.company_address = serializer.data['company_address']
@@ -109,18 +128,17 @@ class CompanyDetailsViewSets(ModelViewSet):
 # #         else:
 # #             return Response({'error': 'permission denied'}, status=status.HTTP_401_UNAUTHORIZED)
 
-# class MedicineInventoryViewSets(viewsets.ViewSet):
-#     queryset = MedicineInventory.objects.all()
-#     serializer_class = MedicineInventorySerializers
-#     authentication_classes = [TokenAuthentication]
-#     permission_classes = [IsAuthenticated]
+class MedicineInventoryViewSets(viewsets.ViewSet):
+    queryset = MedicineInventory.objects.all()
+    serializer_class = MedicineInventorySerializers
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
 
-#     def list(self, request):
-#         queryset = CompanyDetails.objects.all()
-#         serializer = CompanyDetailsSerializers(queryset, many=True)
-#         user_data=serializer.data
-#         company_name=user_data['company_name']
-#         return Response({'company_name':company_name},status=status.HTTP_200_OK)
+    def list(self, request):
+        medicine_inventory=MedicineInventory.objects.filter(account=request.user)
+        serializer = MedicineInventorySerializers(medicine_inventory, many=True)
+        medicine_intventory=serializer.data
+        return Response({'medicine_inventory':medicine_intventory},status=status.HTTP_200_OK)
 
     
 #     def create(self, request):
@@ -241,15 +259,27 @@ class PurchaseViewSets(ModelViewSet):
         if not request.user.is_authenticated:
             return Response({'error': 'User not logged  in'}, status=status.HTTP_401_UNAUTHORIZED)
         purchases = Purchase.objects.filter(account = request.user)
+        company_name=[company.company_name for company in CompanyDetails.objects.all() ]
         serializer = self.serializer_class(purchases, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        responsedata = {'previousbills': serializer.data, 
+                        'companynames': company_name}
+        return Response(responsedata, status=status.HTTP_200_OK)
 
     def create(self, request):
         if not request.user.is_authenticated:
             return Response({'error': 'User not logged  in'}, status=status.HTTP_401_UNAUTHORIZED)
+
         serializer = self.serializer_class(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        company = CompanyDetails.objects.get(company_name="Sun Pharma")
+
+        if not serializer.is_valid():
+            error_values = list(serializer.errors.values())
+            error_keys = list(serializer.errors.keys())
+            if len(error_keys) > 0 and len(error_values) > 0:
+                return Response({f'{error_keys[0]}': f'{error_values[0][0]}'})
+        try:
+            company = CompanyDetails.objects.get(company_name=serializer.validated_data.get('company_name'))
+        except CompanyDetails.DoesNotExist as exp:
+            return Response({'error': 'Invalid company name'}, status=status.HTTP_200_OK)
         purchase = serializer.save(account=request.user, company_name=company)
         purchase_inventory = purchase.purchaseinventory.all()
         for entry in purchase_inventory:
@@ -263,6 +293,7 @@ class PurchaseViewSets(ModelViewSet):
                                                   medicine_quantity=entry.quantity, account=request.user)
                 med_inventory.save()
         serializer = PurchaseSerializers(instance = purchase)
+        
         return Response(serializer.data, status=status.HTTP_201_CREATED)
       
     def retrieve(self, request, pk=None):
@@ -282,27 +313,38 @@ class SalesViewSets(ModelViewSet):
     def list(self, request):
         if not request.user.is_authenticated:
             return Response({'error': 'User not logged in'}, status=status.HTTP_401_UNAUTHORIZED)
-        try:
-            sales = Sales.objects.get(account=request.user)
-            serializer = self.serializer_class(sales, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except Sales.DoesNotExist as exp:
-            return Response({'empty': 'no records as of now'}, status=status.HTTP_200_OK)
 
+        sales = Sales.objects.filter(account=request.user)
+        if len(sales) == 0:
+            return Response({'empty': 'no records as of now'}, status=status.HTTP_200_OK)
+            
+        serializer = self.serializer_class(sales, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+            
     def create(self, request):
         if not request.user.is_authenticated:
             return Response({'error': 'User not logged in'}, status=status.HTTP_401_UNAUTHORIZED)
         serializer = self.serializer_class(data=request.data)
-        serializer.is_valid(raise_exception=True)
+        if not serializer.is_valid():
+            error_values = list(serializer.errors.values())
+            error_keys = list(serializer.errors.keys())
+            if len(error_keys) > 0 and len(error_values) > 0:
+                return Response({f'{error_keys[0]}': f'{error_values[0][0]}'})         
+
         for entry in serializer.validated_data.get('salesinventory'):
             medicine_name = entry.get('medicine_name')
             required_quantity = entry.get('quantity')
-            med_inventory = MedicineInventory.objects.filter(medicine_name=medicine_name).order_by('sale_price')
+            med_inventory = list(MedicineInventory.objects.filter(medicine_name=medicine_name).order_by('sale_price'))
             if len(med_inventory) == 0:
                 return Response({'medicine': 'not found'}, status=status.HTTP_400_BAD_REQUEST)
             available_stock = 0
             for medicine in med_inventory:
-                available_stock += medicine.medicine_quantity
+                if (medicine.expiry - datetime.date.today()) < datetime.timedelta(days=90):
+                    medicine.isexpired = True
+                    med_inventory.remove(medicine)
+                    medicine.save()
+                else:
+                    available_stock += medicine.medicine_quantity
 
             if required_quantity > available_stock:
                 return Response({'medicine': 'not enough stock'}, status=status.HTTP_400_BAD_REQUEST)
@@ -329,6 +371,9 @@ class SalesViewSets(ModelViewSet):
             return Response({'doesNotExist':'does not exist in database'}, status=status.HTTP_404_NOT_FOUND)
                 
 
+
+        
+        
     
 #     def retrieve(self, request, pk=None):
 #         try:
@@ -337,4 +382,3 @@ class SalesViewSets(ModelViewSet):
 #             return Response(serializer.data, status=status.HTTP_200_OK)
 #         except Purchase.DoesNotExist as exp:
 #             return Response(exp, status=status.HTTP_400_BAD_REQUEST)
-
