@@ -4,6 +4,7 @@ from .views import *
 #     TokenRefreshView,
 # )
 urlpatterns =[
+    path('user_verification/<uidb64>/<token>', UserVerification, name="user_verification"),
     path('register/',RegisterView.as_view(),name="register"),
     # path('email-verify/<int:id>/',VerifyEmail.as_view(),name="email-verify"),
     path('login/',LoginAPI.as_view(),name="login"),
@@ -13,7 +14,7 @@ urlpatterns =[
     # path('password_reset/',SetNewPasswordAPI.as_view(),name="password-reset"),
     # path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('logout/',LogoutView.as_view(),name='logout'),
-    path('user-details/<uidb64>/<token>/',UserDetailsCreate.as_view(),name="user_details"),
+    path('user-details/',UserDetailsCreate.as_view(),name="user_details"),
     path('request-reset-email/', RequestPasswordResetEmail.as_view(), name="request-reset-email"),
     path('password-reset-confirm/<uidb64>/<token>/', PasswordResetConfirm.as_view(), name="password-reset-confirm")
 ]
