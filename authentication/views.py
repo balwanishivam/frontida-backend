@@ -34,7 +34,7 @@ def UserVerification(request, uidb64, token):
                 user.is_verified=True
                 user.save()
             user.auth_token.delete()
-            Token.objects.create(user = request.user)
+            Token.objects.create(user = user)
             frontend_login_url = "http://localhost:3000/signin"
             return redirect(frontend_login_url)
 
@@ -81,7 +81,7 @@ class RegisterView(generics.GenericAPIView):
         #         return Response({'Duplicate User':'User Email already used'},status=status.HTTP_200_OK)
         #     else:
         #         return Response({'Empty Fields':'Fields can not be empty'},status=status.HTTP_200_OK)
-       
+
 
 
 class LoginAPI(generics.GenericAPIView):
@@ -216,7 +216,7 @@ class RequestPasswordResetEmail(generics.GenericAPIView):
         except Exception as exp:
             print('Here')
             return Response(status=status.HTTP_200_OK)
-        
+
 
 class PasswordResetConfirm(generics.GenericAPIView):
     serializer_class = SetNewPasswordSerializer
