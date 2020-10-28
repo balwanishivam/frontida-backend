@@ -1,5 +1,7 @@
 from rest_framework.viewsets import ViewSet, ModelViewSet
+from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework import generics
 from rest_framework import status
 from medical_store.models import MedicineInventory, CompanyDetails, Purchase, PurchaseInventory, Sales, SalesInventory
 from medical_store.serializers import MedicineInventorySerializers, CompanyDetailsSerializers, PurchaseSerializers, PurchaseInventorySerializers, SalesSerializers, SalesInventorySerializers
@@ -9,6 +11,7 @@ from rest_framework import viewsets
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import action
 import datetime
+from collections import Counter
 
 class CompanyDetailsViewSets(ModelViewSet):
     serializer_class = CompanyDetailsSerializers
@@ -382,3 +385,26 @@ class SalesViewSets(ModelViewSet):
 #             return Response(serializer.data, status=status.HTTP_200_OK)
 #         except Purchase.DoesNotExist as exp:
 #             return Response(exp, status=status.HTTP_400_BAD_REQUEST)
+
+
+#Count of purchases, count of sales and count of total medicines
+class CountAPI(APIView):
+    queryset = Purchase.objects.all()
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication]
+
+    #class RegisterView(generics.GenericAPIView):
+    def get(self, request):
+        if not request.user.is_authenticated:
+            return Response({'Authentication failed': 'User not authenticated'}, status=status.HTTP_200_OK)
+
+        medicine_names=[medicine.medicine_name for medicine in MedicineInventory.objects.filter(user=request.user)]
+        sales_names=[sales.id for sales in Sales.objects.filter(user=request.user)]
+        purchase_names=[purchase.id for purchase in Purchase.objects.filter(user=request.user)]
+
+
+        medicine_count = len(Counter(medicine_names).keys())
+        sales_count = len(Counter(sales_names).keys())
+        purchase_count = len(Counter(purchase_names).keys())
+
+        return Response({'medicine_count': medicine_count, 'sales_count': sales_count, 'purchase_count': purchase_count}, status=status.HTTP_200_OK)
