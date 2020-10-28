@@ -35,9 +35,8 @@ def UserVerification(request, uidb64, token):
                 user.save()
             user.auth_token.delete()
             Token.objects.create(user = request.user)
-            frontend_login_url = ""
-            response = redirect()
-            return redirect()
+            frontend_login_url = "http://localhost:3000/signin"
+            return redirect(frontend_login_url)
 
 
 class RegisterView(generics.GenericAPIView):
@@ -62,8 +61,8 @@ class RegisterView(generics.GenericAPIView):
         token = Token.objects.get(user=user).key
 
         user_verification_link = reverse('user_verification', kwargs={'uidb64': uidb64, 'token': token})
-        # current_site = get_current_site(request).domain
-        current_site = 'http://127.0.0.1:8000'
+        current_site = get_current_site(request).domain
+        # current_site = 'http://127.0.0.1:8000'
         absurl = current_site + user_verification_link
         subject = 'Account verification for ' + str(user.email)
         message = 'Hello, \n Thankyou for joining us, please login to complete your details and registration process. \n' + absurl  
