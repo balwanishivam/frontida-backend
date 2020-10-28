@@ -7,6 +7,7 @@ from rest_framework.authtoken.models import Token
 from .utils import Utils
 from django.contrib.sites.shortcuts import get_current_site
 from django.urls import reverse
+from django.shortcuts import redirect
 from django.conf import settings
 from .renderers import UserRenderer
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
@@ -19,6 +20,26 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import  permission_classes
 from django.core.exceptions import ObjectDoesNotExist
 
+def UserVerification(request, uidb64, token):
+    if request.method == 'GET':        
+        try:
+            user_id = force_str(urlsafe_base64_decode(uidb64))
+            user = User.objects.get(id=user_id)
+        except DjangoUnicodeDecodeError as exp:
+            raise AuthenticationFailed('Not a valid account verification link', 401)    
+        if token != Token.objects.get(user=user).key:
+            raise AuthenticationFailed('Not a valid account verification link', 401)
+        else:
+            if not user.is_verified:
+                user.is_verified=True
+                user.save()
+            user.auth_token.delete()
+            Token.objects.create(user = request.user)
+            frontend_login_url = ""
+            response = redirect()
+            return redirect()
+
+
 class RegisterView(generics.GenericAPIView):
     serializer_class=RegisterSerializer
     permission_classes = [AllowAny]
@@ -29,6 +50,8 @@ class RegisterView(generics.GenericAPIView):
         if not serializer.is_valid():
             error_values = list(serializer.errors.values())
             error_keys = list(serializer.errors.keys())
+            print(error_keys)
+            print(error_values)
             if len(error_keys) > 0 and len(error_values) > 0:
                 return Response({f'{error_keys[0]}': f'{error_values[0][0]}'})
         
@@ -37,11 +60,13 @@ class RegisterView(generics.GenericAPIView):
         user=User.objects.get(email=user_data['email'])
         uidb64 = urlsafe_base64_encode(smart_bytes(user.id))
         token = Token.objects.get(user=user).key
-        enter_details_link = reverse('user_details', kwargs={'uidb64': uidb64, 'token': token})
-        current_site = get_current_site(request).domain
-        absurl = current_site + enter_details_link
+
+        user_verification_link = reverse('user_verification', kwargs={'uidb64': uidb64, 'token': token})
+        # current_site = get_current_site(request).domain
+        current_site = 'http://127.0.0.1:8000'
+        absurl = current_site + user_verification_link
         subject = 'Account verification for ' + str(user.email)
-        message = 'Hello, \n Thankyou for joining us, please login to complete your details and registration process. \n' 
+        message = 'Hello, \n Thankyou for joining us, please login to complete your details and registration process. \n' + absurl  
         from_email = settings.EMAIL_HOST_USER
         recipient_list = [user.email, ]
         email = EmailMessage(subject, message, from_email, recipient_list,)
@@ -122,47 +147,38 @@ class UserDetailsCreate(APIView):
     authentication_classes = [TokenAuthentication]
     model=UserDetails
     serializer_class = UserDetailsSerializers
-    # def get(self, request, uidb64, token):
-    #     try:
-    #         user_id = force_str(urlsafe_base64_decode(uidb64))
-    #         user = User.objects.get(id=user_id)
+    def get(self, request):
+        if not request.user.is_authenticated:
+            return Response({'error': 'User not logged  in'}, status=status.HTTP_401_UNAUTHORIZED)
 
-    #         if token != Token.objects.get(user=user).key:
-    #             raise AuthenticationFailed('Not a valid account verification link', 401)
-    #         else:
-    #             return Response({'success': 'Token authenticated'}, status=status.HTTP_200_OK)
-    #     except DjangoUnicodeDecodeError as identifier:
-    #         raise AuthenticationFailed('Not a valid reset link', 401)
-
-
-    def post(self, request, uidb64, token):
-        serializer=UserDetailsSerializers(data=request.data)
         try:
-            user_id = force_str(urlsafe_base64_decode(uidb64))
-            user = User.objects.get(id=user_id)
-            if token != Token.objects.get(user=user).key:
-                raise AuthenticationFailed('User not authorized', 200)
+            user_details = UserDetails.objects.get(account=request.user)
+            serializer = self.serializer_class(user_details, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except UserDetails.DoesNotExist as exp:
+            return Response({'error': 'User details not provided'}, status=status.HTTP_200_OK)
             
-            if not serializer.is_valid():    
-                error_values = list(serializer.errors.values())
-                error_keys = list(serializer.errors.keys())
-                if len(error_keys) > 0 and len(error_values) > 0:
-                    return Response({f'{error_keys[0]}': f'{error_values[0][0]}'})
-            
-            if not user.is_verified:
-                user.is_verified=True
-                user.save()
-            serializer.save(account=user)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        
+
+    def post(self, request):
+        serializer=UserDetailsSerializers(data=request.data)
+        if not request.user.is_authenticated:
+            return Response({'error': 'User not logged  in'}, status=status.HTTP_401_UNAUTHORIZED)
+        
+        if not serializer.is_valid():    
+            error_values = list(serializer.errors.values())
+            error_keys = list(serializer.errors.keys())
+            if len(error_keys) > 0 and len(error_values) > 0:
+                return Response({f'{error_keys[0]}': f'{error_values[0][0]}'})
+        
+        serializer.save(account=user)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
             
                 # if User.objects.filter(email=serializer.data['email']).exists():
                 #     print(serializer.errors)
                 #     return Response({'Duplicate User':'User Email already used'},status=status.HTTP_200_OK)
                 # else:
                 #     return Response({'Empty Fields':'Fields can not be empty'},status=status.HTTP_200_OK)
-                
-        except DjangoUnicodeDecodeError as identifier:
-            raise AuthenticationFailed(identifier, 200)
 
 class RequestPasswordResetEmail(generics.GenericAPIView):
     serializer_class = PasswordResetEmailRequestSerializer
