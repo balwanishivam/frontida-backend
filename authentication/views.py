@@ -154,7 +154,9 @@ class UserDetailsCreate(APIView):
         try:
             user_details = UserDetails.objects.get(account=request.user)
             serializer = self.serializer_class(user_details)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            email=user_details.account
+            response={'data':serializer.data,'email':email}
+            return Response(response, status=status.HTTP_200_OK)
         except UserDetails.DoesNotExist as exp:
             return Response({'error': 'User details not provided'}, status=status.HTTP_200_OK)
 
