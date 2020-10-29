@@ -146,6 +146,7 @@ class UserDetailsCreate(APIView):
     authentication_classes = [TokenAuthentication]
     model=UserDetails
     serializer_class = UserDetailsSerializers
+    
     def get(self, request):
         if not request.user.is_authenticated:
             return Response({'error': 'User not logged  in'}, status=status.HTTP_401_UNAUTHORIZED)
@@ -156,8 +157,6 @@ class UserDetailsCreate(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         except UserDetails.DoesNotExist as exp:
             return Response({'error': 'User details not provided'}, status=status.HTTP_200_OK)
-            
-        
 
     def post(self, request):
         serializer=UserDetailsSerializers(data=request.data)
@@ -170,13 +169,8 @@ class UserDetailsCreate(APIView):
             if len(error_keys) > 0 and len(error_values) > 0:
                 return Response({f'{error_keys[0]}': f'{error_values[0][0]}'})
         
-        try:
-            user_details = UserDetails.objects.get(account=request.user)
-            return Response({'DetailsExists': 'Requested user details already exist try updating it'})
-        except UserDetails.DoesNotExist as exp:
-            serializer.save(account=request.user)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-            
+        serializer.save(account=request.user)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
                 # if User.objects.filter(email=serializer.data['email']).exists():
                 #     print(serializer.errors)
                 #     return Response({'Duplicate User':'User Email already used'},status=status.HTTP_200_OK)
