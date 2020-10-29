@@ -152,7 +152,7 @@ class UserDetailsCreate(APIView):
 
         try:
             user_details = UserDetails.objects.get(account=request.user)
-            serializer = self.serializer_class(user_details, many=True)
+            serializer = self.serializer_class(user_details)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except UserDetails.DoesNotExist as exp:
             return Response({'error': 'User details not provided'}, status=status.HTTP_200_OK)
@@ -170,8 +170,12 @@ class UserDetailsCreate(APIView):
             if len(error_keys) > 0 and len(error_values) > 0:
                 return Response({f'{error_keys[0]}': f'{error_values[0][0]}'})
         
-        serializer.save(account=user)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        try:
+            user_details = UserDetails.objects.get(account=request.user)
+            return Response({'DetailsExists': 'Requested user details already exist try updating it'})
+        except UserDetails.DoesNotExist as exp:
+            serializer.save(account=request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
             
                 # if User.objects.filter(email=serializer.data['email']).exists():
                 #     print(serializer.errors)
