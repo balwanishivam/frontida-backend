@@ -81,7 +81,7 @@ class UserDetails(models.Model):
     pincode = models.PositiveIntegerField() 
     contact = models.BigIntegerField()
     # location = GMaps
-    account = models.ForeignKey(User,on_delete=models.CASCADE)
+    account = models.OneToOneField(User,on_delete=models.CASCADE, unique=True)
 
     def __str__(self):
         return self.account.email
