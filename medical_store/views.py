@@ -429,6 +429,10 @@ class StockAPI(APIView):
     def get(self, request):
         if not request.user.is_authenticated:
             return Response({'Authentication failed': 'User not authenticated'}, status=status.HTTP_200_OK)
-        medicine_names=[medicine.medicine_name for medicine in MedicineInventory.objects.filter(account=request.user, medicine_quantity__level__lte=10)]
+        medicine_names=[medicine.medicine_name for medicine in MedicineInventory.objects.filter(account=request.user)]
+        
+        # for medicine in MedicineInventory.objects.filter(account=request.user):
+        #     if medicine.medicine_quantity<=10 and medicine.medicine_quantity>=0:
+        #         medicine_names.append(medicine.medicine_name)
         medicine_count = len(Counter(medicine_names).keys())
         return Response({'medicine_names': medicine_names,'medicine_count': medicine_count}, status=status.HTTP_200_OK)
