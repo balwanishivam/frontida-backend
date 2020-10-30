@@ -402,9 +402,9 @@ class CountAPI(APIView):
         if not request.user.is_authenticated:
             return Response({'Authentication failed': 'User not authenticated'}, status=status.HTTP_200_OK)
 
-        medicine_names=[medicine.medicine_name for medicine in MedicineInventory.objects.filter(user=request.user)]
-        sales_names=[sales.id for sales in Sales.objects.filter(user=request.user)]
-        purchase_names=[purchase.id for purchase in Purchase.objects.filter(user=request.user)]
+        medicine_names=[medicine.medicine_name for medicine in MedicineInventory.objects.filter(account=request.user)]
+        sales_names=[sales.id for sales in Sales.objects.filter(account=request.user)]
+        purchase_names=[purchase.id for purchase in Purchase.objects.filter(account=request.user)]
 
 
         medicine_count = len(Counter(medicine_names).keys())
@@ -412,3 +412,26 @@ class CountAPI(APIView):
         purchase_count = len(Counter(purchase_names).keys())
 
         return Response({'medicine_count': medicine_count, 'sales_count': sales_count, 'purchase_count': purchase_count}, status=status.HTTP_200_OK)
+
+class ExpiryAPI(APIView):
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication]
+    def get(self, request):
+        if not request.user.is_authenticated:
+            return Response({'Authentication failed': 'User not authenticated'}, status=status.HTTP_200_OK)
+
+        medicine_names=[medicine.medicine_name for medicine in MedicineInventory.objects.filter(account=request.user, isexpired=True)]
+        return Response({'medicine_names': medicine_names}, status=status.HTTP_200_OK)
+
+class StockAPI(APIView):
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication]
+    def get(self, request):
+        if not request.user.is_authenticated:
+            return Response({'Authentication failed': 'User not authenticated'}, status=status.HTTP_200_OK)
+        medicine_names=[medicine.medicine_name for medicine in MedicineInventory.objects.filter(account=request.user)]
+        # for medicine in MedicineInventory.objects.filter(account=request.user):
+        #     if medicine.medicine_quantity<=10 and medicine.medicine_quantity>=0:
+        #         medicine_names.append(medicine.medicine_name)
+        medicine_count = len(Counter(medicine_names).keys())
+        return Response({'medicine_names': medicine_names,'medicine_count': medicine_count}, status=status.HTTP_200_OK)
