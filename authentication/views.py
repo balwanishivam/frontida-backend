@@ -154,7 +154,7 @@ class UserDetailsCreate(APIView):
         try:
             user_details = UserDetails.objects.get(account=request.user)
             serializer = self.serializer_class(user_details)
-            email=user_details.account
+            email=request.user.email
             response={'data':serializer.data,'email':email}
             return Response(response, status=status.HTTP_200_OK)
         except UserDetails.DoesNotExist as exp:
@@ -171,13 +171,13 @@ class UserDetailsCreate(APIView):
             if len(error_keys) > 0 and len(error_values) > 0:
                 return Response({f'{error_keys[0]}': f'{error_values[0][0]}'})
         
-        serializer.save(account=request.user)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-                # if User.objects.filter(email=serializer.data['email']).exists():
-                #     print(serializer.errors)
-                #     return Response({'Duplicate User':'User Email already used'},status=status.HTTP_200_OK)
-                # else:
-                #     return Response({'Empty Fields':'Fields can not be empty'},status=status.HTTP_200_OK)
+        try:	            
+            user_details = UserDetails.objects.get(account=request.user)
+            return Response({'DetailsExists': 'Requested user details already exist try updating it'})
+        except UserDetails.DoesNotExist as exp:
+            serializer.save(account=request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+                
 
 class RequestPasswordResetEmail(generics.GenericAPIView):
     serializer_class = PasswordResetEmailRequestSerializer

@@ -14,6 +14,8 @@ app_name="medical_store"
 # urlpatterns = router.urls
 urlpatterns = [
     path('count/', views.CountAPI.as_view(), name='count-API'),
+    path('expiry/', views.ExpiryAPI.as_view(), name='expiry-API'),
+    path('stock/', views.StockAPI.as_view(), name='stock-API'),
     
 ]
 
