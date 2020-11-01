@@ -431,8 +431,7 @@ class StockAPI(APIView):
             return Response({'Authentication failed': 'User not authenticated'}, status=status.HTTP_200_OK)
         medicine_names = [medicine.medicine_name for medicine in MedicineInventory.objects.filter(account=request.user)]
         medicine_names = list(set(medicine_names))
-        low_stock_name = []
-        low_stock_count=[]
+        low_stock_name = {}
         for medicine_name in medicine_names:
             medicines = MedicineInventory.objects.filter(medicine_name=medicine_name)
             count = 0
@@ -440,6 +439,5 @@ class StockAPI(APIView):
                 print(medicine)
                 count += medicine.medicine_quantity
             if count < 10:
-                low_stock_name.append(medicine_name)
-                low_stock_count.append(count) 
-        return Response({'medicine_name':low_stock_name,'medicine_count':low_stock_count}, status=status.HTTP_200_OK)
+                low_stock[medicine_name] = count 
+        return Response({'medicine_details':low_stock}, status=status.HTTP_200_OK)
