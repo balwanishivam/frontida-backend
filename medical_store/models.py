@@ -19,7 +19,8 @@ class MedicineInventory(models.Model):
     account = models.ForeignKey(User ,on_delete=models.CASCADE)
     isexpired = models.BooleanField(default=False)
 
-
+    def __str__(self):
+        return self.medicine_name
 
 class CompanyDetails(models.Model):
     company_name = models.CharField(max_length=200)
@@ -42,7 +43,7 @@ class Purchase(models.Model):
     account = models.ForeignKey(User,on_delete=models.CASCADE)
 
     def __str__(self):
-        return  self.bill_number
+        return  self.distributor_name
 
 
 class PurchaseInventory(models.Model):
@@ -57,7 +58,7 @@ class PurchaseInventory(models.Model):
     isexpired = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.batch_number
+        return self.medicine_name
 
 class Sales(models.Model):
     bill_number= models.CharField(max_length=10)
@@ -70,7 +71,7 @@ class Sales(models.Model):
     account = models.ForeignKey(User,on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.bill_number
+        return self.customer_name
 
 
 class SalesInventory(models.Model):
@@ -82,6 +83,8 @@ class SalesInventory(models.Model):
     sales_id = models.ForeignKey(Sales, on_delete=models.DO_NOTHING, related_name='salesinventory')
     isexpired = models.BooleanField(default=False)
 
+    def __str__(self):
+        return self.medicine_name
 
 
 
