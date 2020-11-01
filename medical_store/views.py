@@ -331,4 +331,4 @@ class StockAPI(APIView):
                 count += medicine.medicine_quantity
             if count < 10:
                 low_stock[medicine_name] = count 
-        return Response(low_stock, status=status.HTTP_200_OK)
+        return Response({'medicine_details':low_stock}, status=status.HTTP_200_OK)
