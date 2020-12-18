@@ -16,6 +16,17 @@ from decouple import config
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+if os.name == 'nt':
+    import platform
+    OSGEO4W = r"C:\OSGeo4W"
+    if '64' in platform.architecture()[0]:
+        OSGEO4W += "64"
+    assert os.path.isdir(OSGEO4W), "Directory does not exist: " + OSGEO4W
+    os.environ['OSGEO4W_ROOT'] = OSGEO4W
+    os.environ['GDAL_DATA'] = OSGEO4W + r"\share\gdal"
+    os.environ['PROJ_LIB'] = OSGEO4W + r"\share\proj"
+    os.environ['PATH'] = OSGEO4W + r"\bin;" + os.environ['PATH']
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
@@ -39,13 +50,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
+    'django.contrib.gis',
     'rest_framework',
     'rest_framework.authtoken',
-    # 'django_google_maps',
     'medical_store',
     'authentication',
     'corsheaders',
-    'Users'
+    'Users',
+    'leaflet'
 ]
 
 MIDDLEWARE = [
@@ -83,12 +95,14 @@ WSGI_APPLICATION = 'frontida_backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
+DATABASES = {'default':
+                {'ENGINE': 'django.contrib.gis.db.backends.postgis',
+                 'NAME': 'frontida-backend',
+                 'USER': config('POSTGRES_USER'),
+                 'PASSWORD': config('POSTGRES_PASSWORD'),
+                 'HOST': 'localhost',
+                 'PORT': '5432', }
+              }
 
 
 # Password validation
@@ -160,3 +174,5 @@ EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 
 import django_heroku
 django_heroku.settings(locals())
+
+
