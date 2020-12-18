@@ -53,11 +53,11 @@ INSTALLED_APPS = [
     'django.contrib.gis',
     'rest_framework',
     'rest_framework.authtoken',
-    # 'django_google_maps',
     'medical_store',
     'authentication',
     'corsheaders',
-    'Users'
+    'Users',
+    'leaflet'
 ]
 
 MIDDLEWARE = [
