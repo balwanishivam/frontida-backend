@@ -57,7 +57,8 @@ INSTALLED_APPS = [
     'authentication',
     'corsheaders',
     'Users',
-    'leaflet'
+    'leaflet',
+    'mapwidgets'
 ]
 
 MIDDLEWARE = [
@@ -174,5 +175,17 @@ EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 
 import django_heroku
 django_heroku.settings(locals())
+
+#Google map settings
+GOOGLE_MAP_API_KEY = config('GOOGLE_MAP_API_KEY')
+MAP_WIDGETS = {
+    "GooglePointFieldWidget": (
+        ('zoom', 15),
+        ('mapCenterLocationName', 'delhi'),
+        ('GooglePlaceAutocompleteOptions', {'componentRestrictions': {'country': 'nl'}}),
+        ('markerFitZoom', 12),
+    ),
+    "GOOGLE_MAP_API_KEY": GOOGLE_MAP_API_KEY
+}
 
 
