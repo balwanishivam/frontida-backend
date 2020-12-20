@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import User,UserDetails
 from rest_framework.serializers import ModelSerializer
+from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from django.contrib import auth
 from rest_framework.exceptions import AuthenticationFailed
@@ -70,39 +71,6 @@ class SetNewPasswordSerializer(serializers.Serializer):
         except Exception as exp:
             raise AuthenticationFailed(exp, 401)
         return super().validate(attrs)
-
-    # def validate(self,attrs):
-    #     email=attrs['data'].get('email','')
-    #     if User.objects.filter(email=email).exists():
-    #         user=User.objects.filter(email=email)
-    #         uidb64=urlsafe_base64_encode(user.id)
-    #         token=PasswordResetTokenGenerator().make_token(user)
-    #         current_site=get_current_site(request=attrs['request'].get('request','')).domain
-    #         relativeLink=reverse('password-reset-confirm',kwargs={'uidb64':uidb64,'token':token})
-    #         absurl='http://'+current_site+relativeLink
-    #         email_body='Hello,\n Use link below to reset your password \n'+ absurl
-    #         data={'email_body':email_body,'email_subject':'Reset your Password','to_email':user.email}
-    #         Utils.send_email(data)
-    #         return attrs
-        
-        # return super().validate(attrs)
-
-
-# class RefreshTokenSerializer(serializers.Serializer):
-#     refresh = serializers.CharField()
-#     default_error_messages = {
-#         'bad_token': 'Token is invalid or expired'
-#     }
-
-#     def validate(self, attrs):
-#         self.token = attrs['refresh']
-#         return attrs
-
-#     def save(self, **kwargs):
-#         try:
-#             RefreshToken(self.token).blacklist()
-#         except TokenError:
-#             self.fail('bad_token')
 
 class UserDetailsSerializers(ModelSerializer):
     class Meta:

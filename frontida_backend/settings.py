@@ -17,6 +17,17 @@ from decouple import config
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+if os.name == 'nt':
+    import platform
+    OSGEO4W = r"C:\OSGeo4W"
+    if '64' in platform.architecture()[0]:
+        OSGEO4W += "64"
+    assert os.path.isdir(OSGEO4W), "Directory does not exist: " + OSGEO4W
+    os.environ['OSGEO4W_ROOT'] = OSGEO4W
+    os.environ['GDAL_DATA'] = OSGEO4W + r"\share\gdal"
+    os.environ['PROJ_LIB'] = OSGEO4W + r"\share\proj"
+    os.environ['PATH'] = OSGEO4W + r"\bin;" + os.environ['PATH']
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
@@ -40,13 +51,15 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
+    'django.contrib.gis',
     'rest_framework',
     'rest_framework.authtoken',
-    # 'django_google_maps',
     'medical_store',
     'authentication',
     'corsheaders',
-    'Users'
+    'Users',
+    'leaflet',
+    'mapwidgets'
 ]
 
 MIDDLEWARE = [
@@ -84,6 +97,7 @@ WSGI_APPLICATION = 'frontida_backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
+<<<<<<< HEAD
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.sqlite3',
@@ -100,6 +114,17 @@ DATABASES = {
         'PORT': '5432',
 }
 }
+=======
+DATABASES = {'default':
+                {'ENGINE': 'django.contrib.gis.db.backends.postgis',
+                 'NAME': 'frontida-backend',
+                 'USER': config('POSTGRES_USER'),
+                 'PASSWORD': config('POSTGRES_PASSWORD'),
+                 'HOST': 'localhost',
+                 'PORT': '5432', }
+              }
+
+>>>>>>> 51ad8b28f7b6830283dce1a44bb24e63b74f5d1b
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
@@ -170,3 +195,17 @@ EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 
 import django_heroku
 django_heroku.settings(locals())
+
+#Google map settings
+GOOGLE_MAP_API_KEY = config('GOOGLE_MAP_API_KEY')
+MAP_WIDGETS = {
+    "GooglePointFieldWidget": (
+        ('zoom', 15),
+        ('mapCenterLocationName', 'delhi'),
+        ('GooglePlaceAutocompleteOptions', {'componentRestrictions': {'country': 'nl'}}),
+        ('markerFitZoom', 12),
+    ),
+    "GOOGLE_MAP_API_KEY": GOOGLE_MAP_API_KEY
+}
+
+
