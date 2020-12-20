@@ -111,7 +111,8 @@ class LoginAPI(generics.GenericAPIView):
         user_type=user.user_type
         token = Token.objects.get(user=user).key
         try:
-            user_details = UserDetailsSerializers(instance = UserDetails.objects.get(account=user)) 
+            user_details = UserDetailsSerializers(instance = UserDetails.objects.get(account=user))
+
         except UserDetails.DoesNotExist as exp:
             return Response({'NoUserDetails':'User details not provided','token':token}, status=status.HTTP_200_OK)
         response_data = {'email': user_data['email'],'user_type':user.user_type,'token': token, 'user_details': user_details.data}
