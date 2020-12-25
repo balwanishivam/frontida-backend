@@ -12,6 +12,7 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import action
 import datetime
 from collections import Counter
+from .utils import CheckExpiry
 
 class CompanyDetailsViewSets(ModelViewSet):
     serializer_class = CompanyDetailsSerializers
@@ -26,13 +27,6 @@ class CompanyDetailsViewSets(ModelViewSet):
         serializer = self.serializer_class(self.queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-
-# def list(self, request):
-#         queryset = CompanyDetails.objects.all()
-#         serializer = CompanyDetailsSerializers(queryset, many=True)
-#         user_data=serializer.data
-#         company_name=user_data['company_name']
-#         return Response({'company_name':company_name},status=status.HTTP_200_OK)
     
     def create(self, request):
         print(request.user)
@@ -116,20 +110,6 @@ class CompanyDetailsViewSets(ModelViewSet):
 
 
 
-# # class MedicineInventoryCreate(APIView):
-# #     authentication_classes = [authentication.TokenAuthentication]
-# #     permission_classes = [IsAuthenticated]
-# #     model=StoreDetails
-# #     serializer_class = MedicineInventorySerializers
-# #     # def get(self,request):
-
-# #     def post(self,request):
-# #         serializer=MedicineInventorySerializers(data=request.data)
-# #         if serializer.is_valid():
-# #             serializer.save()
-# #             return Response(serializer.data,status=status.HTTP_201_CREATED)
-# #         else:
-# #             return Response({'error': 'permission denied'}, status=status.HTTP_401_UNAUTHORIZED)
 
 class MedicineInventoryViewSets(viewsets.ViewSet):
     queryset = MedicineInventory.objects.all()
@@ -267,12 +247,7 @@ class SalesViewSets(ModelViewSet):
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Sales.DoesNotExist as exp:
             return Response({'doesNotExist':'does not exist in database'}, status=status.HTTP_404_NOT_FOUND)
-                
 
-
-        
-        
-    
 #     def retrieve(self, request, pk=None):
 #         try:
 #             purchase = Purchase.objects.get(pk=pk)
@@ -310,9 +285,8 @@ class ExpiryAPI(APIView):
     def get(self, request):
         if not request.user.is_authenticated:
             return Response({'Authentication failed': 'User not authenticated'}, status=status.HTTP_200_OK)
-
-        medicine_names=[medicine.medicine_name for medicine in MedicineInventory.objects.filter(account=request.user, isexpired=True)]
-        return Response({'medicine_names': medicine_names}, status=status.HTTP_200_OK)
+        expired_medicine=CheckExpiry.check(request.user)
+        return Response({'medicine_names': expired_medicine}, status=status.HTTP_200_OK)
 
 class StockAPI(APIView):
     permission_classes = [IsAuthenticated]
@@ -332,3 +306,5 @@ class StockAPI(APIView):
             if count < 10:
                 low_stock[medicine_name] = count 
         return Response({'medicine_details':low_stock}, status=status.HTTP_200_OK)
+
+

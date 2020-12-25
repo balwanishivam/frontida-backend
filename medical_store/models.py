@@ -88,7 +88,6 @@ class SalesInventory(models.Model):
 
 
 
-
 # class Delivery(models.Model):
 #     customer_address = models.CharField(max_length=200)
 #     customer_contact = models.PositiveIntegerField(validators=[MaxValueValidator(9999999999),MinValueValidator(1000000000)])
