@@ -1,7 +1,7 @@
 from .models import MedicineInventory
 import datetime
 class CheckExpiry:
-    def check(user):
+    def check(self,user):
         data=MedicineInventory.objects.filter(account=user)
         sys_date=datetime.date.today()
         expired_medicine=[]
