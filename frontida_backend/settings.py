@@ -35,13 +35,13 @@ if os.name == "nt":
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get("SECRET_KEY")
+# SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get("DEBUG")
+DEBUG = os.environ.get('DEBUG')
 
-ALLOWED_HOSTS = ["frontida.herokuapp.com"]
-AUTH_USER_MODEL = "authentication.User"
+ALLOWED_HOSTS = ['frontida.herokuapp.com']
+AUTH_USER_MODEL = 'authentication.User'
 SITE_ID = 1
 # Application definition
 
@@ -234,5 +234,6 @@ AUTHENTICATION_BACKENDS = [
     "social_core.backends.google.GoogleOAuth2",
 ]
 
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = (os.environ.get("SOCIAL_AUTH_GOOGLE_OAUTH2_CLIENT_ID"),)
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = (os.environ.get("SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET"),)
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = (os.environ.get("SOCIAL_AUTH_GOOGLE_OAUTH2_CLIENT_ID"),)
+
