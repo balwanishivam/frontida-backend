@@ -35,10 +35,10 @@ if os.name == "nt":
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config("SECRET_KEY")
+SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config("DEBUG")
+DEBUG = os.environ.get("DEBUG")
 
 ALLOWED_HOSTS = ["frontida.herokuapp.com"]
 AUTH_USER_MODEL = "authentication.User"
@@ -74,8 +74,8 @@ SOCIALACCOUNT_PROVIDERS = {
         # (``socialaccount`` app) containing the required client
         # credentials, or list them here:
         "APP": {
-            "client_id": "1004275268502-dj1kna4f31qmjt085u4dcbalddm7td4s.apps.googleusercontent.com",
-            "secret": "ojP1OyGInTeEIee-oLytw6ZW",
+            "client_id": os.environ.get("SOCIAL_AUTH_GOOGLE_OAUTH2_CLIENT_ID"),
+            "secret": os.environ.get("SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET"),
             "key": "",
         }
     }
@@ -124,8 +124,8 @@ DATABASES = {
     "default": {
         "ENGINE": "django.contrib.gis.db.backends.postgis",
         "NAME": "frontida-backend",
-        "USER": config("POSTGRES_USER"),
-        "PASSWORD": config("POSTGRES_PASSWORD"),
+        "USER": os.environ.get("POSTGRES_USER"),
+        "PASSWORD": os.environ.get("POSTGRES_PASSWORD"),
         "HOST": "localhost",
         "PORT": "5432",
     }
@@ -201,15 +201,15 @@ EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = config("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
+EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
 
 import django_heroku
 
 django_heroku.settings(locals())
 
 # Google map settings
-GOOGLE_MAP_API_KEY = config("GOOGLE_MAP_API_KEY")
+GOOGLE_MAP_API_KEY = os.environ.get("GOOGLE_MAP_API_KEY")
 MAP_WIDGETS = {
     "GooglePointFieldWidget": (
         ("zoom", 15),
@@ -234,7 +234,5 @@ AUTHENTICATION_BACKENDS = [
     "social_core.backends.google.GoogleOAuth2",
 ]
 
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = (
-    "1004275268502-dj1kna4f31qmjt085u4dcbalddm7td4s.apps.googleusercontent.com"
-)
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = "ojP1OyGInTeEIee-oLytw6ZW"
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = (os.environ.get("SOCIAL_AUTH_GOOGLE_OAUTH2_CLIENT_ID"),)
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = (os.environ.get("SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET"),)
