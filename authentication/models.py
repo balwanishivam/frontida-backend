@@ -91,7 +91,7 @@ class UserDetails(models.Model):
     city = models.CharField(max_length=50, choices=CITY)
     pincode = models.PositiveIntegerField()
     contact = models.BigIntegerField()
-    # point = models.PointField(geography=True, default=Point(0.0, 0.0))
+    point = models.PointField(geography=True, default=Point(0.0, 0.0))
     account = models.OneToOneField(User, on_delete=models.CASCADE)
 
     def __str__(self):
