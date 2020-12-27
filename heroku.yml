@@ -3,7 +3,7 @@ setup:
     - plan: 'heroku-postgresql:hobby-dev'
       as: DATABASE
   config: {
-    SECRET_KEY : "n@g5nm$#)r7p(enpdsyl#vk7v!x+s80j7t9kli9ngj@1&x56gy",
+    SECRET_KEY : 'n@g5nm$#)r7p(enpdsyl#vk7v!x+s80j7t9kli9ngj@1&x56gy',
     DEBUG : True,
     EMAIL_HOST_USER : 'healthcare.frontida@gmail.com',
     EMAIL_HOST_PASSWORD : 'iicnoaupdzdaqgmf',
