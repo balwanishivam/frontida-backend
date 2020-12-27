@@ -19,7 +19,6 @@ build:
   languages:
     - python
 run:
-  python: manage.py collectstatic --noinput
   web: 'gunicorn frontida_backend.wsgi:application --preload --workers 1'
   python: manage.py migrate
 
