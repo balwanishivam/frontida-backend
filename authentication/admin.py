@@ -3,7 +3,7 @@ from .models import User, UserDetails
 # from django.contrib.gis.db.models import GeometryField
 # from django.forms.widgets import TextInput
 # from mapwidgets.widgets import GooglePointFieldInlineWidget
-from leaflet.admin import LeafletGeoAdmin
+from leaflet import admin as leafletadmin
 
 
 # class PointLocation(admin.ModelAdmin):
@@ -12,4 +12,4 @@ from leaflet.admin import LeafletGeoAdmin
 #     }
 
 admin.site.register(User)
-admin.site.register(UserDetails, LeafletGeoAdmin)
+admin.site.register(UserDetails, leafletadmin.LeafletGeoAdmin)
