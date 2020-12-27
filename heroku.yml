@@ -1,19 +1,26 @@
 setup:
-  config: {
-  SECRET_KEY : "n@g5nm$#)r7p(enpdsyl#vk7v!x+s80j7t9kli9ngj@1&x56gy",
-  DEBUG : True,
-  EMAIL_HOST_USER : 'healthcare.frontida@gmail.com',
-  EMAIL_HOST_PASSWORD : 'iicnoaupdzdaqgmf',
-  POSTGRES_USER : 'postgres',
-  POSTGRES_PASSWORD  : 'shivam0407',
-  GOOGLE_MAP_API_KEY : 'AIzaSyA3P8hpXR0Tb0SH1ygLW__lmxBkYprSI2I',
-  SOCIAL_AUTH_GOOGLE_OAUTH2_CLIENT_ID : '1004275268502-dj1kna4f31qmjt085u4dcbalddm7td4s.apps.googleusercontent.com',
-  SOCIAL_AUTH_GOOGLE_OAUTH_SECRET : 'ojP1OyGInTeEIee-oLytw6ZW',
-  }
+  addons:
+    - plan: 'heroku-postgresql:hobby-dev'
+      as: DATABASE
+  config:
+    SECRET_KEY : "n@g5nm$#)r7p(enpdsyl#vk7v!x+s80j7t9kli9ngj@1&x56gy",
+    DEBUG : True,
+    EMAIL_HOST_USER : 'healthcare.frontida@gmail.com',
+    EMAIL_HOST_PASSWORD : 'iicnoaupdzdaqgmf',
+    POSTGRES_USER : 'postgres',
+    POSTGRES_PASSWORD  : 'shivam0407',
+    GOOGLE_MAP_API_KEY : 'AIzaSyA3P8hpXR0Tb0SH1ygLW__lmxBkYprSI2I',
+    SOCIAL_AUTH_GOOGLE_OAUTH2_CLIENT_ID : '1004275268502-dj1kna4f31qmjt085u4dcbalddm7td4s.apps.googleusercontent.com',
+    SOCIAL_AUTH_GOOGLE_OAUTH_SECRET : 'ojP1OyGInTeEIee-oLytw6ZW',
 build:
   packages:
     - gdal-bin
   languages:
     - python
 run:
-  web: gunicorn frontida-backend.wsgi
+  python: manage.py collectstatic --noinput
+  web: 'gunicorn frontida_backend.wsgi:application --preload --workers 1'
+  python: manage.py migrate
+
+
+
