@@ -41,6 +41,7 @@ if os.name == "nt":
 # SECRET_KEY = os.environ.get('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG')
+# DEBUG = True
 
 ALLOWED_HOSTS = ['frontida.herokuapp.com']
 AUTH_USER_MODEL = 'authentication.User'
@@ -62,8 +63,8 @@ INSTALLED_APPS = [
     "authentication",
     "corsheaders",
     "Users",
-    "leaflet",
-    "mapwidgets",
+    'leaflet',
+    # "mapwidgets",
     "oauth2_provider",
     "social_django",
     "rest_framework_social_oauth2",
@@ -123,13 +124,15 @@ WSGI_APPLICATION = "frontida_backend.wsgi.application"
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.contrib.gis.db.backends.postgis",
-        "NAME": "frontida-backend",
-        "USER": os.environ.get("POSTGRES_USER"),
-        "PASSWORD": os.environ.get("POSTGRES_PASSWORD"),
-        "HOST": "localhost",
-        "PORT": "5432",
+    'default': {
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        'NAME': 'frontida-backend',
+        'USER': os.environ.get("POSTGRES_USER"),
+        # "USER": config("POSTGRES_USER"),
+        'PASSWORD': os.environ.get("POSTGRES_PASSWORD"),
+        # "PASSWORD": config("POSTGRES_PASSWORD"),
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 
@@ -204,26 +207,28 @@ EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
+# EMAIL_HOST_USER = config("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
+# EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
 
 import django_heroku
 
 django_heroku.settings(locals())
 
 # Google map settings
-GOOGLE_MAP_API_KEY = os.environ.get("GOOGLE_MAP_API_KEY")
-MAP_WIDGETS = {
-    "GooglePointFieldWidget": (
-        ("zoom", 15),
-        ("mapCenterLocationName", "delhi"),
-        (
-            "GooglePlaceAutocompleteOptions",
-            {"componentRestrictions": {"country": "nl"}},
-        ),
-        ("markerFitZoom", 12),
-    ),
-    "GOOGLE_MAP_API_KEY": GOOGLE_MAP_API_KEY,
-}
+# GOOGLE_MAP_API_KEY = os.environ.get("GOOGLE_MAP_API_KEY")
+# MAP_WIDGETS = {
+#     "GooglePointFieldWidget": (
+#         ("zoom", 15),
+#         ("mapCenterLocationName", "delhi"),
+#         (
+#             "GooglePlaceAutocompleteOptions",
+#             {"componentRestrictions": {"country": "nl"}},
+#         ),
+#         ("markerFitZoom", 12),
+#     ),
+#     "GOOGLE_MAP_API_KEY": GOOGLE_MAP_API_KEY,
+# }
 AUTHENTICATION_BACKENDS = [
     # Needed to login by username in Django admin, regardless of `allauth`
     "django.contrib.auth.backends.ModelBackend",
@@ -236,8 +241,10 @@ AUTHENTICATION_BACKENDS = [
     "social_core.backends.google.GoogleOAuth2",
 ]
 
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = (os.environ.get("SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET"),)
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = (os.environ.get("SOCIAL_AUTH_GOOGLE_OAUTH2_CLIENT_ID"),)
+# SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = (os.environ.get("SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET"),)
+# SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = (config("SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET"),)
+# # SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = (os.environ.get("SOCIAL_AUTH_GOOGLE_OAUTH2_CLIENT_ID"),)
+# SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = (config("SOCIAL_AUTH_GOOGLE_OAUTH2_CLIENT_ID"),)
 
 GDAL_LIBRARY_PATH = os.environ.get('GDAL_LIBRARY_PATH')
 GEOS_LIBRARY_PATH = os.environ.get('GEOS_LIBRARY_PATH')
