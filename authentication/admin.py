@@ -13,4 +13,4 @@ from .models import User, UserDetails
 #     }
 
 admin.site.register(User)
-admin.site.register(UserDetails)
+admin.site.register(UserDetails, LeafletGeoAdmin)
