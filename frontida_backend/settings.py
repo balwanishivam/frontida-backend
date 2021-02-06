@@ -15,6 +15,9 @@ import psycopg2
 from django.urls import reverse_lazy
 from decouple import config
 import dj_database_url
+from dotenv import load_dotenv, find_dotenv
+
+load_dotenv(find_dotenv())
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -40,11 +43,11 @@ if os.name == "nt":
 # SECURITY WARNING: keep the secret key used in production secret!
 # SECRET_KEY = os.environ.get('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG')
+DEBUG = os.environ.get("DEBUG")
 # DEBUG = True
 
-ALLOWED_HOSTS = ['frontida.herokuapp.com']
-AUTH_USER_MODEL = 'authentication.User'
+ALLOWED_HOSTS = ["frontida.herokuapp.com"]
+AUTH_USER_MODEL = "authentication.User"
 SITE_ID = 1
 # Application definition
 
@@ -63,7 +66,8 @@ INSTALLED_APPS = [
     "authentication",
     "corsheaders",
     "Users",
-    'leaflet',
+    "leaflet",
+    "drf_yasg",
     # "mapwidgets",
     "oauth2_provider",
     "social_django",
@@ -122,17 +126,16 @@ WSGI_APPLICATION = "frontida_backend.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
-
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': 'frontida-backend',
-        'USER': os.environ.get("POSTGRES_USER"),
+    "default": {
+        "ENGINE": "django.contrib.gis.db.backends.postgis",
+        "NAME": "frontida-backend",
+        "USER": os.environ.get("POSTGRES_USER"),
         # "USER": config("POSTGRES_USER"),
-        'PASSWORD': os.environ.get("POSTGRES_PASSWORD"),
+        "PASSWORD": os.environ.get("POSTGRES_PASSWORD"),
         # "PASSWORD": config("POSTGRES_PASSWORD"),
-        'HOST': 'localhost',
-        'PORT': '5432',
+        "HOST": "localhost",
+        "PORT": "5432",
     }
 }
 
@@ -200,6 +203,7 @@ REST_FRAMEWORK = {
         # 'rest_framework.permissions.IsAuthenticated',
         # 'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
     ],
+    "DEFAULT_SCHEMA_CLASS": "rest_framework.schemas.coreapi.AutoSchema",
 }
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
@@ -246,9 +250,17 @@ AUTHENTICATION_BACKENDS = [
 # # SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = (os.environ.get("SOCIAL_AUTH_GOOGLE_OAUTH2_CLIENT_ID"),)
 # SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = (config("SOCIAL_AUTH_GOOGLE_OAUTH2_CLIENT_ID"),)
 
-GDAL_LIBRARY_PATH = os.environ.get('GDAL_LIBRARY_PATH')
-GEOS_LIBRARY_PATH = os.environ.get('GEOS_LIBRARY_PATH')
+GDAL_LIBRARY_PATH = os.environ.get("GDAL_LIBRARY_PATH")
+GEOS_LIBRARY_PATH = os.environ.get("GEOS_LIBRARY_PATH")
 
 
-DATABASES['default'] = dj_database_url.config()
-DATABASES['default']['ENGINE'] = 'django.contrib.gis.db.backends.postgis'
+# DATABASES["default"] = dj_database_url.config()
+# DATABASES["default"]["ENGINE"] = "django.contrib.gis.db.backends.postgis"
+
+
+STATIC_URL = "/static/"
+
+# only refers to the location where your static files should end up after running manage.py collectstatic. you shouldn't really need collectstatic) when developing locally
+STATIC_ROOT = "staticfiles"
+
+STATICFILES_DIRS = (os.path.join(BASE_DIR, "../static"),)
