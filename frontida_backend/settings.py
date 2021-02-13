@@ -190,8 +190,8 @@ CORS_ALLOW_CREDENTIALS = True
 STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 # Extra places for collectstatic to find static files.
-STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"),)
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+# STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"),)
+# STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
@@ -224,19 +224,19 @@ import django_heroku
 django_heroku.settings(locals())
 
 # Google map settings
-# GOOGLE_MAP_API_KEY = os.environ.get("GOOGLE_MAP_API_KEY")
-# MAP_WIDGETS = {
-#     "GooglePointFieldWidget": (
-#         ("zoom", 15),
-#         ("mapCenterLocationName", "delhi"),
-#         (
-#             "GooglePlaceAutocompleteOptions",
-#             {"componentRestrictions": {"country": "nl"}},
-#         ),
-#         ("markerFitZoom", 12),
-#     ),
-#     "GOOGLE_MAP_API_KEY": GOOGLE_MAP_API_KEY,
-# }
+GOOGLE_MAP_API_KEY = os.environ.get("GOOGLE_MAP_API_KEY")
+MAP_WIDGETS = {
+    "GooglePointFieldWidget": (
+        ("zoom", 15),
+        ("mapCenterLocationName", "delhi"),
+        (
+            "GooglePlaceAutocompleteOptions",
+            {"componentRestrictions": {"country": "nl"}},
+        ),
+        ("markerFitZoom", 12),
+    ),
+    "GOOGLE_MAP_API_KEY": GOOGLE_MAP_API_KEY,
+}
 AUTHENTICATION_BACKENDS = [
     # Needed to login by username in Django admin, regardless of `allauth`
     "django.contrib.auth.backends.ModelBackend",
