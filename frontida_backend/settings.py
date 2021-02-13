@@ -67,9 +67,9 @@ INSTALLED_APPS = [
     "authentication",
     "corsheaders",
     "Users",
-    "leaflet",
+    # "leaflet",
     "drf_yasg",
-    # "mapwidgets",
+    "mapwidgets",
     "oauth2_provider",
     "social_django",
     "rest_framework_social_oauth2",
@@ -257,9 +257,6 @@ AUTHENTICATION_BACKENDS = [
 GDAL_LIBRARY_PATH = os.environ.get("GDAL_LIBRARY_PATH")
 GEOS_LIBRARY_PATH = os.environ.get("GEOS_LIBRARY_PATH")
 
-
-# DATABASES["default"] = dj_database_url.config()
-# DATABASES["default"]["ENGINE"] = "django.contrib.gis.db.backends.postgis"
 
 DATABASES["default"] = dj_database_url.config()
 DATABASES["default"]["ENGINE"] = "django.contrib.gis.db.backends.postgis"
