@@ -22,9 +22,9 @@ load_dotenv(find_dotenv())
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # SECURITY WARNING: keep the secret key used in production secret!
-# SECRET_KEY = os.environ.get("SECRET_KEY")
-# print(SECRET_KEY)
-SECRET_KEY = "n@g5nm$#)r7p(enpdsyl#vk7v!x+s80j7t9kli9ngj@1&x56gy"
+
+SECRET_KEY = os.environ.get("SECRET_KEY")
+# SECRET_KEY = "n@g5nm$#)r7p(enpdsyl#vk7v!x+s80j7t9kli9ngj@1&x56gy"
 if os.name == "nt":
     import platform
 
@@ -189,9 +189,6 @@ CORS_ALLOW_CREDENTIALS = True
 
 STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
-# Extra places for collectstatic to find static files.
-# STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"),)
-# STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
