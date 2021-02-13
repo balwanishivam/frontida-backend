@@ -7,7 +7,7 @@ setup:
     LD_LIBRARY_PATH: "/app/lib"
     POSTGRES_PASSWORD: "root"
     POSTGRES_USER: "postgres"
-    SECRET_KEY: "n@g5nm$#)r7p(enpdsyl#vk7v!x+s80j7t9kli9ngj@1&x56gy"
+    SECRET_KEY: ""
 build:
   packages:
     - gdal-bin
