@@ -1,13 +1,13 @@
 setup:
   config:
-    BUILD_WITH_GEO_LIBRARIES: '1'
-    DEBUG: 'True'
-    EMAIL_HOST_PASSWORD: '"iicnoaupdzdaqgmf"'
-    EMAIL_HOST_USER: '"healthcare.frontida@gmail.com"'
-    LD_LIBRARY_PATH: /app/lib
-    POSTGRES_PASSWORD: '"root"'
-    POSTGRES_USER: '"postgres"'
-    SECRET_KEY: '"n@g5nm$#)r7p(enpdsyl#vk7v!x+s80j7t9kli9ngj@1&x56gy"'
+    BUILD_WITH_GEO_LIBRARIES: 1
+    DEBUG: "True"
+    EMAIL_HOST_PASSWORD: "iicnoaupdzdaqgmf"
+    EMAIL_HOST_USER: "healthcare.frontida@gmail.com"
+    LD_LIBRARY_PATH: "/app/lib"
+    POSTGRES_PASSWORD: "root"
+    POSTGRES_USER: "postgres"
+    SECRET_KEY: "n@g5nm$#)r7p(enpdsyl#vk7v!x+s80j7t9kli9ngj@1&x56gy"
 build:
   packages:
     - gdal-bin
