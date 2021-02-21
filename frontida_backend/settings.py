@@ -44,8 +44,8 @@ if os.name == "nt":
 # SECURITY WARNING: keep the secret key used in production secret!
 # SECRET_KEY = os.environ.get('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get("DEBUG")
-# DEBUG = True
+# DEBUG = os.environ.get("DEBUG")
+DEBUG = True
 
 ALLOWED_HOSTS = ["frontida.herokuapp.com"]
 AUTH_USER_MODEL = "authentication.User"
@@ -132,10 +132,12 @@ DATABASES = {
     "default": {
         "ENGINE": "django.contrib.gis.db.backends.postgis",
         "NAME": "frontida-backend",
-        "USER": os.environ.get("POSTGRES_USER"),
+        # "USER": os.environ.get("POSTGRES_USER"),
         # "USER": config("POSTGRES_USER"),
-        "PASSWORD": os.environ.get("POSTGRES_PASSWORD"),
+        "USER": "postgres",
+        # "PASSWORD": os.environ.get("POSTGRES_PASSWORD"),
         # "PASSWORD": config("POSTGRES_PASSWORD"),
+        "PASSWORD": "shivam0407",
         "HOST": "localhost",
         "PORT": "5432",
     }
@@ -211,8 +213,11 @@ EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
+# EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
 # EMAIL_HOST_USER = config("EMAIL_HOST_USER")
+EMAIL_HOST_USER = "healthcare.frontida@gmail.com"
+EMAIL_HOST_PASSWORD = "iicnoaupdzdaqgmf"
+
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
 # EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
 
@@ -221,7 +226,8 @@ import django_heroku
 django_heroku.settings(locals())
 
 # Google map settings
-GOOGLE_MAP_API_KEY = os.environ.get("GOOGLE_MAP_API_KEY")
+# GOOGLE_MAP_API_KEY = os.environ.get("GOOGLE_MAP_API_KEY")
+GOOGLE_MAP_API_KEY = "AIzaSyA3P8hpXR0Tb0SH1ygLW__lmxBkYprSI2I"
 MAP_WIDGETS = {
     "GooglePointFieldWidget": (
         ("zoom", 15),
