@@ -209,6 +209,13 @@ REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "rest_framework.schemas.coreapi.AutoSchema",
 }
 
+
+# Note: You can generate a secure key with:
+from django.core.management.utils import get_random_secret_key;
+
+## Hash Salt
+HASHID_FIELD_SALT = get_random_secret_key()
+
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
@@ -261,5 +268,5 @@ GDAL_LIBRARY_PATH = os.environ.get("GDAL_LIBRARY_PATH")
 GEOS_LIBRARY_PATH = os.environ.get("GEOS_LIBRARY_PATH")
 
 
-DATABASES["default"] = dj_database_url.config()
-DATABASES["default"]["ENGINE"] = "django.contrib.gis.db.backends.postgis"
+# DATABASES["default"] = dj_database_url.config()
+# DATABASES["default"]["ENGINE"] = "django.contrib.gis.db.backends.postgis"

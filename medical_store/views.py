@@ -184,8 +184,6 @@ class PurchaseViewSets(ModelViewSet):
             )
 
         serializer = self.serializer_class(data=request.data)
-        user_data = serializer.data
-        bill_no = user_data["bill_number"]
         if not serializer.is_valid():
             error_values = list(serializer.errors.values())
             error_keys = list(serializer.errors.keys())
@@ -199,7 +197,12 @@ class PurchaseViewSets(ModelViewSet):
             return Response(
                 {"error": "Invalid company name"}, status=status.HTTP_200_OK
             )
-        purchase = serializer.save(account=request.user, company_name=company)
+        count=Purchase.objects.filter(account=request.user).count()
+        value = request.user.id +count+1
+        print(value)
+        purchase = serializer.save(
+            account=request.user, company_name=company, hash_val=value
+        )
         purchase_inventory = purchase.purchaseinventory.all()
         for entry in purchase_inventory:
             try:
@@ -222,12 +225,6 @@ class PurchaseViewSets(ModelViewSet):
                 )
                 med_inventory.save()
         serializer = PurchaseSerializers(instance=purchase)
-        value = str(request.user + bill_no)
-        value = HashVal.hash_it(value)
-        print(value)
-        purchase = Purchase.objects.filter(account=request.user)
-        purchase.hash_val = value
-        purchase.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def retrieve(self, request, pk=None):

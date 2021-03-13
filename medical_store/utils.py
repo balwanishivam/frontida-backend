@@ -17,6 +17,6 @@ class CheckExpiry:
 
 
 class HashVal:
-    def hash_it(self, val):
+    def hash_it(val):
         result = hashlib.sha256(val.encode())
         return result

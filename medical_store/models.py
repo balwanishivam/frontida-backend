@@ -4,6 +4,7 @@ from django.db import models
 import datetime
 from django.core.validators import MaxValueValidator, MinValueValidator
 from authentication.models import User
+from hashid_field import HashidField
 
 # Medicine Inventory
 class MedicineInventory(models.Model):
@@ -46,6 +47,7 @@ class Purchase(models.Model):
     total_amount = models.DecimalField(decimal_places=2, max_digits=10)
     discount = models.DecimalField(decimal_places=2, max_digits=4)
     account = models.ForeignKey(User, on_delete=models.CASCADE)
+    hash_val = HashidField(null=True,blank=True)
 
     def __str__(self):
         return self.distributor_name
@@ -63,7 +65,6 @@ class PurchaseInventory(models.Model):
         Purchase, on_delete=models.DO_NOTHING, related_name="purchaseinventory"
     )
     isexpired = models.BooleanField(default=False)
-    hash_val = models.CharField(max_length=600, null=True, blank=True)
 
     def __str__(self):
         return self.medicine_name
