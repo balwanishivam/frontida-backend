@@ -15,16 +15,19 @@ import psycopg2
 from django.urls import reverse_lazy
 from decouple import config
 import dj_database_url
-from dotenv import load_dotenv, find_dotenv
 
-load_dotenv(find_dotenv())
 
+
+
+
+IS_PRODUCTION=False
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # SECURITY WARNING: keep the secret key used in production secret!
 
-# SECRET_KEY = os.environ.get("SECRET_KEY")
-SECRET_KEY = "n@g5nm$#)r7p(enpdsyl#vk7v!x+s80j7t9kli9ngj@1&x56gy"
+SECRET_KEY = config("SECRET_KEY")
+# print(SECRET_KEY)
+# SECRET_KEY = "n@g5nm$#)r7p(enpdsyl#vk7v!x+s80j7t9kli9ngj@1&x56gy"
 if os.name == "nt":
     import platform
 
@@ -128,20 +131,25 @@ WSGI_APPLICATION = "frontida_backend.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
-DATABASES = {
-    "default": {
-        "ENGINE": "django.contrib.gis.db.backends.postgis",
-        "NAME": "frontida-backend",
-        # "USER": os.environ.get("POSTGRES_USER"),
-        # "USER": config("POSTGRES_USER"),
-        "USER": "postgres",
-        # "PASSWORD": os.environ.get("POSTGRES_PASSWORD"),
-        # "PASSWORD": config("POSTGRES_PASSWORD"),
-        "PASSWORD": "shivam0407",
-        "HOST": "localhost",
-        "PORT": "5432",
+if  IS_PRODUCTION:
+    DATABASES["default"] = dj_database_url.config()
+    DATABASES["default"]["ENGINE"] = "django.contrib.gis.db.backends.postgis"
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.contrib.gis.db.backends.postgis",
+            "NAME": "frontida-backend",
+            # "USER": os.environ.get("POSTGRES_USER"),
+            "USER": config("POSTGRES_USER"),
+            # "USER": "postgres",
+            # "PASSWORD": os.environ.get("POSTGRES_PASSWORD"),
+            "PASSWORD": config("POSTGRES_PASSWORD"),
+            # "PASSWORD": "shivam0407",
+            "HOST": "localhost",
+            "PORT": "5432",
+        }
     }
-}
+
 
 
 # Password validation
@@ -221,20 +229,18 @@ EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 # EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
-# EMAIL_HOST_USER = config("EMAIL_HOST_USER")
+EMAIL_HOST_USER = config("EMAIL_HOST_USER")
 EMAIL_HOST_USER = "healthcare.frontida@gmail.com"
 EMAIL_HOST_PASSWORD = "iicnoaupdzdaqgmf"
 
-EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
-# EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
+# EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
+EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
 
-import django_heroku
 
-django_heroku.settings(locals())
 
 # Google map settings
-# GOOGLE_MAP_API_KEY = os.environ.get("GOOGLE_MAP_API_KEY")
-GOOGLE_MAP_API_KEY = "AIzaSyA3P8hpXR0Tb0SH1ygLW__lmxBkYprSI2I"
+GOOGLE_MAP_API_KEY = config("GOOGLE_MAP_API_KEY")
+# GOOGLE_MAP_API_KEY = "AIzaSyA3P8hpXR0Tb0SH1ygLW__lmxBkYprSI2I"
 MAP_WIDGETS = {
     "GooglePointFieldWidget": (
         ("zoom", 15),
@@ -267,6 +273,6 @@ AUTHENTICATION_BACKENDS = [
 GDAL_LIBRARY_PATH = os.environ.get("GDAL_LIBRARY_PATH")
 GEOS_LIBRARY_PATH = os.environ.get("GEOS_LIBRARY_PATH")
 
+import django_heroku
+django_heroku.settings(locals())
 
-# DATABASES["default"] = dj_database_url.config()
-# DATABASES["default"]["ENGINE"] = "django.contrib.gis.db.backends.postgis"
