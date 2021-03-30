@@ -16,11 +16,7 @@ from django.urls import reverse_lazy
 from decouple import config
 import dj_database_url
 
-
-
-
-
-IS_PRODUCTION=False
+IS_PRODUCTION=config("IS_PRODUCTION")
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # SECURITY WARNING: keep the secret key used in production secret!
